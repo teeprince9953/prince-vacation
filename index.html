@@ -462,6 +462,12 @@
       background: #fffbeb;
     }
 
+    .calendar-badge.holiday {
+      border-color: #fecaca;
+      color: #b91c1c;
+      background: #fff1f2;
+    }
+
     .months {
       display: grid;
       gap: 18px;
@@ -546,6 +552,14 @@
       outline-offset: -3px;
     }
 
+    .day.holiday-day {
+      background: linear-gradient(135deg, #fff1f2 0%, #fff 58%);
+    }
+
+    .day.holiday-day .date-num span:first-child {
+      color: #dc2626;
+    }
+
     .date-num {
       position: relative;
       z-index: 5;
@@ -556,16 +570,31 @@
       font-size: 14px;
     }
 
-    .deadline-label {
+    .day-labels {
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .deadline-label, .holiday-label {
       display: inline-flex;
       align-items: center;
       gap: 3px;
       padding: 3px 6px;
       border-radius: 999px;
-      background: #f59e0b;
       color: #fff;
       font-size: 10px;
       font-weight: 1000;
+      white-space: nowrap;
+    }
+
+    .deadline-label { background: #f59e0b; }
+    .holiday-label {
+      max-width: 92px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      background: #dc2626;
     }
 
     .track {
@@ -672,6 +701,14 @@
     }
 
     .locked-help.show { display: block; }
+
+    .holiday-help {
+      margin-top: -4px;
+      margin-bottom: 12px;
+      color: #667085;
+      font-size: 12px;
+      font-weight: 800;
+    }
 
     .loading-cover {
       position: fixed;
@@ -874,6 +911,16 @@
           <div class="field">
             <label for="adminMemo">상단 메모</label>
             <input id="adminMemo" type="text" />
+          </div>
+
+          <div class="field">
+            <label for="adminHolidays">공휴일 관리</label>
+            <textarea id="adminHolidays" placeholder="예: 2026-08-15 광복절&#10;2026-08-17 광복절 대체공휴일"></textarea>
+            <div class="holiday-help">한 줄에 하나씩 입력하세요. 형식: YYYY-MM-DD 공휴일명</div>
+          </div>
+
+          <div class="btn-row">
+            <button class="light" id="holidayDefaultBtn">해당 연도 기본 공휴일 적용</button>
           </div>
 
           <div class="btn-row">
@@ -1107,8 +1154,60 @@
 대표는 주차 제한과 상관없이 별도로 표시됩니다.`);
     }
 
-    function showVacationSuccessPopup() {
+    function showVacationSuccessPopup(holidayInfo = []) {
+      const holidayCount = Array.isArray(holidayInfo) ? holidayInfo.length : 0;
+      if (holidayCount > 0) {
+        const holidayNames = holidayInfo.map(item => `${formatMD(item.date)} ${item.name}`).join(", ");
+        alert(`휴가 선택이 완료되었습니다.\n즐거운 휴가 되세요 😎🌴\n\n선택 기간에 공휴일이 ${holidayCount}일 포함되어 있습니다.\n${holidayNames}\n연차 +${holidayCount}을 대표님에게 보고해주세요 📝`);
+        return;
+      }
       alert("휴가 선택이 완료되었습니다.\n즐거운 휴가 되세요 😎🌴");
+    }
+
+    function getDefaultHolidaysForYear(year) {
+      return JSON.parse(JSON.stringify(DEFAULT_HOLIDAYS_BY_YEAR[Number(year)] || []));
+    }
+
+    function normalizeHolidayList(holidays = []) {
+      const used = new Set();
+      return holidays
+        .map(item => {
+          const date = String(item?.date || "").trim();
+          const name = String(item?.name || "공휴일").trim() || "공휴일";
+          if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || used.has(date)) return null;
+          used.add(date);
+          return { date, name };
+        })
+        .filter(Boolean)
+        .sort((a, b) => a.date.localeCompare(b.date));
+    }
+
+    function holidayLinesToList(raw) {
+      return String(raw || "")
+        .split(/\n+/)
+        .map(line => line.trim())
+        .filter(Boolean)
+        .map(line => {
+          const match = line.match(/^(\d{4}-\d{2}-\d{2})\s*(.*)$/);
+          if (!match) return null;
+          return { date: match[1], name: match[2].trim() || "공휴일" };
+        })
+        .filter(Boolean);
+    }
+
+    function holidayListToLines(holidays = []) {
+      return normalizeHolidayList(holidays)
+        .map(item => `${item.date} ${item.name}`)
+        .join("\n");
+    }
+
+    function getHolidayByDate(ymd) {
+      return (state?.holidays || []).find(item => item.date === ymd) || null;
+    }
+
+    function getHolidaysInRange(startYmd, endYmd) {
+      return normalizeHolidayList(state?.holidays || [])
+        .filter(item => item.date >= startYmd && item.date <= endYmd);
     }
 
     function getSlotSelectedMembers(slotId, excludeMemberName = "") {
@@ -1168,6 +1267,7 @@
         const json = await res.json();
         if (!json.ok) throw new Error(json.message || "불러오기 실패");
         state = json.data;
+        state.holidays = normalizeHolidayList(state.holidays || getDefaultHolidaysForYear(state.settings.year));
         slots = buildSlots(state.settings);
         document.documentElement.style.setProperty("--member-count", String(Math.max(1, state.members.length)));
         updateTrackRowCount();
@@ -1238,7 +1338,7 @@
       $("deadlineTitle").textContent = `${locked ? "휴가 체크 마감 완료" : "휴가 체크 마감일"}: ${formatFull(state.settings.checkDeadline)}`;
       $("deadlineSub").textContent = locked
         ? "마감일 이후라 직원 선택·수정은 불가합니다. 수정이나 추가가 필요한 경우 관리자에게 문의하세요."
-        : `${state.settings.memo || "팀원별 주단위 1회 선택"} · 마감일은 달력에도 노란색으로 표시됩니다.`;
+        : `${state.settings.memo || "팀원별 주단위 1회 선택"} · 공휴일에 휴가가 겹치면 연차 보상 보고 팝업이 표시됩니다.`;
     }
 
     function renderMemberDropdown() {
@@ -1339,6 +1439,7 @@
       $("adminEnd").value = state.settings.endDate;
       $("adminDeadline").value = state.settings.checkDeadline;
       $("adminMemo").value = state.settings.memo || "";
+      $("adminHolidays").value = holidayListToLines(state.holidays || []);
       renderAdminMemberList();
     }
 
@@ -1374,7 +1475,11 @@
       const memberBadges = state.members.map(member => `
         <span class="calendar-badge"><span class="dot" style="background:${member.color}"></span>${escapeHtml(member.name)}</span>
       `).join("");
-      badges.innerHTML = `<span class="calendar-badge deadline">${isDeadlinePassed() ? "마감 완료" : "마감일"} ${formatMD(state.settings.checkDeadline)}</span>${memberBadges}`;
+      const start = state.settings.startDate;
+      const end = state.settings.endDate;
+      const holidayCount = normalizeHolidayList(state.holidays || []).filter(item => item.date >= start && item.date <= end).length;
+      const holidayBadge = holidayCount ? `<span class="calendar-badge holiday">공휴일 ${holidayCount}일 반영</span>` : `<span class="calendar-badge holiday">공휴일 없음</span>`;
+      badges.innerHTML = `<span class="calendar-badge deadline">${isDeadlinePassed() ? "마감 완료" : "마감일"} ${formatMD(state.settings.checkDeadline)}</span>${holidayBadge}${memberBadges}`;
     }
 
     function getChoiceInfoForDate(ymd) {
@@ -1444,8 +1549,10 @@
           dayEl.className = "day";
           if (d.getMonth() !== month) dayEl.classList.add("outside");
           if (d < start || d > end) dayEl.classList.add("out-period");
+          const holiday = getHolidayByDate(ymd);
           if (ymd === today) dayEl.classList.add("today");
           if (ymd === deadline) dayEl.classList.add("deadline-day");
+          if (holiday) dayEl.classList.add("holiday-day");
 
           const tracks = getChoiceInfoForDate(ymd).map(info => {
             const top = 30 + info.rowIndex * 28;
@@ -1462,7 +1569,10 @@
           dayEl.innerHTML = `
             <div class="date-num">
               <span>${d.getDate()}</span>
-              ${ymd === deadline ? `<span class="deadline-label">마감</span>` : ""}
+              <span class="day-labels">
+                ${ymd === deadline ? `<span class="deadline-label">마감</span>` : ""}
+                ${holiday ? `<span class="holiday-label" title="${escapeAttr(holiday.name)}">${escapeHtml(holiday.name)}</span>` : ""}
+              </span>
             </div>
             ${tracks}
           `;
@@ -1567,14 +1677,18 @@
       if (!pendingConfirm) return;
       try {
         $("confirmOkBtn").disabled = true;
-        const data = await apiPost({ action: "selectVacation", ...pendingConfirm });
+        const confirmedRequest = { ...pendingConfirm };
+        const data = await apiPost({ action: "selectVacation", ...confirmedRequest });
         state = data;
+        state.holidays = normalizeHolidayList(state.holidays || []);
         slots = buildSlots(state.settings);
         closeModal("confirmModal");
         pendingConfirm = null;
         renderAll();
         setStatus("choiceStatus", "휴가 일정이 확정되어 달력에 표시되었습니다.", "ok");
-        showVacationSuccessPopup();
+        const confirmedSlot = getSlot(confirmedRequest.slotId);
+        const holidayInfo = confirmedSlot ? getHolidaysInRange(confirmedSlot.start, confirmedSlot.end) : [];
+        showVacationSuccessPopup(holidayInfo);
       } catch (err) {
         if (String(err.message || "").includes("최대 2명") || String(err.message || "").includes("선택한 주차")) {
           alert(err.message);
@@ -1599,6 +1713,7 @@
       try {
         const data = await apiPost({ action: "clearVacation", memberName: member.name });
         state = data;
+        state.holidays = normalizeHolidayList(state.holidays || []);
         renderAll();
         setStatus("choiceStatus", "해당 팀원의 휴가 선택이 취소되었습니다.", "ok");
       } catch (err) {
@@ -1648,6 +1763,13 @@
       $("backupArea").classList.remove("open");
     });
 
+    $("holidayDefaultBtn").addEventListener("click", () => {
+      const year = Number($("adminYear").value) || new Date().getFullYear();
+      const holidays = getDefaultHolidaysForYear(year);
+      $("adminHolidays").value = holidayListToLines(holidays);
+      setStatus("adminStatus", holidays.length ? `${year}년 기본 공휴일을 적용했습니다. 필요한 날짜는 직접 수정하세요.` : `${year}년 기본 공휴일 데이터가 없습니다. 직접 입력해주세요.`, holidays.length ? "ok" : "error");
+    });
+
     $("autoPeriodBtn").addEventListener("click", () => {
       const year = Number($("adminYear").value) || new Date().getFullYear();
       const period = getAutoPeriod(year);
@@ -1692,6 +1814,7 @@
         checkDeadline: $("adminDeadline").value,
         memo: $("adminMemo").value.trim()
       };
+      const holidays = normalizeHolidayList(holidayLinesToList($("adminHolidays").value));
 
       if (!settings.startDate || !settings.endDate || !settings.checkDeadline) {
         setStatus("adminStatus", "시작일, 종료일, 마감일을 모두 입력해주세요.", "error");
@@ -1704,8 +1827,9 @@
 
       try {
         $("saveAdminBtn").disabled = true;
-        const data = await apiPost({ action: "saveSettings", adminPassword, settings, members });
+        const data = await apiPost({ action: "saveSettings", adminPassword, settings, members, holidays });
         state = data;
+        state.holidays = normalizeHolidayList(state.holidays || []);
         slots = buildSlots(state.settings);
         adminMembersDraft = JSON.parse(JSON.stringify(state.members));
         renderAll();
@@ -1723,6 +1847,7 @@
       try {
         const data = await apiPost({ action: "resetChoices", adminPassword });
         state = data;
+        state.holidays = normalizeHolidayList(state.holidays || []);
         slots = buildSlots(state.settings);
         renderAll();
         setStatus("adminStatus", "모든 휴가 선택을 초기화했습니다.", "ok");
@@ -1752,6 +1877,7 @@
       try {
         const data = await apiPost({ action: "importData", adminPassword, data: JSON.parse(raw) });
         state = data;
+        state.holidays = normalizeHolidayList(state.holidays || []);
         slots = buildSlots(state.settings);
         adminMembersDraft = JSON.parse(JSON.stringify(state.members));
         renderAll();

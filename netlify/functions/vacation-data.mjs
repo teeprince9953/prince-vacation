@@ -10,6 +10,17 @@ const COLOR_PALETTE = [
   "#84cc16", "#d946ef", "#0ea5e9", "#fb7185", "#10b981"
 ];
 
+const DEFAULT_HOLIDAYS_BY_YEAR = {
+  2026: [
+    { date: "2026-08-15", name: "광복절" },
+    { date: "2026-08-17", name: "광복절 대체공휴일" },
+    { date: "2026-09-24", name: "추석 연휴" },
+    { date: "2026-09-25", name: "추석" },
+    { date: "2026-09-26", name: "추석 연휴" },
+    { date: "2026-09-28", name: "추석 대체공휴일" }
+  ]
+};
+
 const DEFAULT_DATA = {
   settings: {
     year: 2026,
@@ -27,6 +38,7 @@ const DEFAULT_DATA = {
     { name: "지영은", color: "#8b5cf6" }
   ],
   choices: {},
+  holidays: DEFAULT_HOLIDAYS_BY_YEAR[2026],
   updatedAt: null
 };
 
@@ -145,6 +157,24 @@ function normalizeMembers(members = []) {
     .filter(Boolean);
 }
 
+function getDefaultHolidaysForYear(year) {
+  return JSON.parse(JSON.stringify(DEFAULT_HOLIDAYS_BY_YEAR[Number(year)] || []));
+}
+
+function normalizeHolidays(holidays = []) {
+  const used = new Set();
+  return holidays
+    .map(item => {
+      const date = String(item?.date || "").trim();
+      const name = String(item?.name || "공휴일").trim() || "공휴일";
+      if (!parseDate(date) || used.has(date)) return null;
+      used.add(date);
+      return { date, name };
+    })
+    .filter(Boolean)
+    .sort((a, b) => a.date.localeCompare(b.date));
+}
+
 function normalizeData(raw) {
   const base = cloneDefault();
   const settings = {
@@ -156,6 +186,10 @@ function normalizeData(raw) {
   const end = parseDate(settings.endDate) ? settings.endDate : base.settings.endDate;
   const deadline = parseDate(settings.checkDeadline) ? settings.checkDeadline : base.settings.checkDeadline;
   const members = normalizeMembers(raw?.members?.length ? raw.members : base.members);
+  const normalizedYear = Number(settings.year) || parseDate(start).getUTCFullYear();
+  const holidays = normalizeHolidays(
+    Array.isArray(raw?.holidays) ? raw.holidays : getDefaultHolidaysForYear(normalizedYear)
+  );
   const memberNames = new Set(members.map(m => m.name));
   const slots = buildSlots({ ...settings, startDate: start, endDate: end });
   const slotIds = new Set(slots.map(slot => slot.id));
@@ -167,7 +201,7 @@ function normalizeData(raw) {
 
   return {
     settings: {
-      year: Number(settings.year) || parseDate(start).getUTCFullYear(),
+      year: normalizedYear,
       title: String(settings.title || base.settings.title).trim() || base.settings.title,
       startDate: start,
       endDate: end,
@@ -176,6 +210,7 @@ function normalizeData(raw) {
     },
     members,
     choices,
+    holidays,
     updatedAt: raw?.updatedAt || null
   };
 }
@@ -324,7 +359,8 @@ export default async (request) => {
         memo: incomingSettings.memo
       },
       members: incomingMembers,
-      choices: data.choices
+      choices: data.choices,
+      holidays: Array.isArray(body.holidays) ? body.holidays : data.holidays
     });
 
     const saved = await writeData(nextData);
