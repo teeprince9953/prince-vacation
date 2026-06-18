@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>2026년 프린스 하계휴가 일정</title>
+  <title>2026년 프린스 하계휴가 일정 관리 웹앱</title>
   <style>
     :root {
       --bg: #f5f7fb;
@@ -1366,7 +1366,7 @@
       $("deadlineTitle").textContent = `${locked ? "휴가 체크 마감 완료" : "휴가 체크 마감일"}: ${formatFull(state.settings.checkDeadline)}`;
       $("deadlineSub").textContent = locked
         ? "마감일 이후라 직원 선택·수정은 불가합니다. 수정이나 추가가 필요한 경우 관리자에게 문의하세요."
-        : `${state.settings.memo || "팀원별 주단위 1회 선택"} · 공휴일에 휴가가 겹치면 연차 보상 보고 팝업이 표시됩니다.`;
+        : `${state.settings.memo || "팀원별 주단위 1회 선택"} `;
     }
 
     function renderMemberDropdown() {
