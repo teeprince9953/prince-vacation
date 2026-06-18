@@ -581,13 +581,14 @@
       justify-content: flex-end;
     }
 
-    .deadline-label, .holiday-label {
+    .deadline-label {
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 3px;
       padding: 4px 8px;
       border-radius: 999px;
+      background: #f59e0b;
       color: #fff;
       font-size: 11px;
       line-height: 1.05;
@@ -597,14 +598,22 @@
       box-shadow: 0 3px 9px rgba(15, 23, 42, 0.16);
     }
 
-    .deadline-label { background: #f59e0b; }
     .holiday-label {
-      max-width: 118px;
+      display: inline-block;
+      max-width: 124px;
+      padding: 0;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      box-shadow: none;
+      color: #dc2626;
+      font-size: 12px;
+      line-height: 1.15;
+      letter-spacing: -0.05em;
+      font-weight: 1000;
+      white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      background: #dc2626;
-      border: 1px solid rgba(255, 255, 255, 0.9);
-      box-shadow: 0 3px 10px rgba(220, 38, 38, 0.28);
     }
 
     .track {
