@@ -516,7 +516,7 @@
 
     .day {
       position: relative;
-      min-height: max(82px, calc(48px + var(--track-row-count) * 20px));
+      min-height: max(92px, calc(52px + var(--track-row-count) * 28px));
       padding: 6px;
       border-right: 1px solid var(--line);
       border-bottom: 1px solid var(--line);
@@ -573,7 +573,7 @@
       z-index: 4;
       left: 0;
       right: 0;
-      height: 18px;
+      height: 20px;
       pointer-events: none;
       color: var(--track-color);
     }
@@ -622,17 +622,20 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      max-width: 96%;
-      padding: 4px 11px 5px;
+      max-width: 92%;
+      min-width: 58px;
+      padding: 2px 9px 3px;
       border-radius: 999px;
       color: #fff;
       background: #111827;
-      border: 3px solid var(--track-color);
-      box-shadow: 0 6px 16px rgba(15,23,42,0.26);
-      font-size: 16px;
+      border: 2px solid var(--track-color);
+      box-shadow: 0 5px 12px rgba(15,23,42,0.24);
+      font-size: 14px;
+      line-height: 1.08;
       font-weight: 1000;
       letter-spacing: -0.04em;
       white-space: nowrap;
+      text-align: center;
       text-shadow: 0 1px 2px rgba(0,0,0,0.22);
     }
 
@@ -745,12 +748,12 @@
       .field-grid { grid-template-columns: 1fr; }
       .months { padding: 10px; gap: 12px; }
       .day {
-        min-height: max(70px, calc(42px + var(--track-row-count) * 18px));
+        min-height: max(82px, calc(44px + var(--track-row-count) * 24px));
         padding: 5px;
       }
-      .track { height: 17px; }
+      .track { height: 18px; }
       .track-line { height: 4px; }
-      .track-name { font-size: 12px; padding: 2px 7px; border-width: 2px; }
+      .track-name { font-size: 11px; min-width: 48px; padding: 2px 6px; border-width: 2px; }
       .arrow-left { border-top-width: 6px; border-bottom-width: 6px; border-right-width: 10px; }
       .arrow-right { border-top-width: 6px; border-bottom-width: 6px; border-left-width: 10px; }
       .date-num { font-size: 12px; }
@@ -1131,7 +1134,7 @@
         state = json.data;
         slots = buildSlots(state.settings);
         document.documentElement.style.setProperty("--member-count", String(Math.max(1, state.members.length)));
-        document.documentElement.style.setProperty("--track-row-count", String(Math.max(1, getActiveChoiceMembers().length)));
+        updateTrackRowCount();
         renderAll();
         $("loadingCover").style.display = "none";
         $("syncStatus").textContent = `공용 저장 연결됨 · ${new Date().toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" })}`;
@@ -1142,8 +1145,33 @@
       }
     }
 
+    function getMaxTrackRowCount() {
+      const counts = new Map();
+      Object.values(state.choices || {}).forEach(slotId => {
+        if (!slotId) return;
+        counts.set(slotId, (counts.get(slotId) || 0) + 1);
+      });
+      return Math.max(1, Math.min(2, ...Array.from(counts.values()), 1));
+    }
+
+    function getTrackRowIndex(memberName, slotId) {
+      const names = Object.entries(state.choices || {})
+        .filter(([name, selectedSlotId]) => selectedSlotId === slotId)
+        .map(([name]) => name)
+        .sort((a, b) => {
+          const ai = state.members.findIndex(member => member.name === a);
+          const bi = state.members.findIndex(member => member.name === b);
+          return ai - bi;
+        });
+      return Math.max(0, names.indexOf(memberName));
+    }
+
+    function updateTrackRowCount() {
+      document.documentElement.style.setProperty("--track-row-count", String(getMaxTrackRowCount()));
+    }
+
     function renderAll() {
-      document.documentElement.style.setProperty("--track-row-count", String(Math.max(1, getActiveChoiceMembers().length)));
+      updateTrackRowCount();
       renderTitles();
       renderDeadline();
       renderMemberDropdown();
@@ -1308,7 +1336,7 @@
 
     function getChoiceInfoForDate(ymd) {
       const activeMembers = getActiveChoiceMembers();
-      return activeMembers.map((member, rowIndex) => {
+      return activeMembers.map((member) => {
         const slotId = state.choices[member.name];
         const slot = getSlot(slotId);
         if (!slot || ymd < slot.start || ymd > slot.end) return null;
@@ -1318,7 +1346,7 @@
         const center = addDays(start, Math.floor((end - start) / (2 * 24 * 60 * 60 * 1000)));
         return {
           member,
-          rowIndex,
+          rowIndex: Math.min(1, getTrackRowIndex(member.name, slotId)),
           slot,
           isStart: ymd === slot.start,
           isEnd: ymd === slot.end,
@@ -1377,7 +1405,7 @@
           if (ymd === deadline) dayEl.classList.add("deadline-day");
 
           const tracks = getChoiceInfoForDate(ymd).map(info => {
-            const top = 28 + info.rowIndex * 20;
+            const top = 30 + info.rowIndex * 28;
             return `
               <div class="track ${info.isStart ? "start" : ""} ${info.isEnd ? "end" : ""}" style="top:${top}px;--track-color:${info.member.color}">
                 <span class="track-line"></span>
