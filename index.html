@@ -1061,6 +1061,22 @@
       alert("휴가 체크 마감일이 지나 수정이나 체크가 불가합니다.\n수정이나 추가가 필요한 경우 관리자에게 문의하세요.");
     }
 
+    function showSlotTakenPopup(conflictName) {
+      alert(`이미 ${conflictName}님이 선택한 주차입니다.\n같은 주에는 2명 이상 신청할 수 없습니다.\n다른 주차를 선택해주세요.`);
+    }
+
+    function showVacationSuccessPopup() {
+      alert("휴가 선택이 완료되었습니다.\n즐거운 휴가 되세요 😎🌴");
+    }
+
+    function getSlotConflictMember(slotId, memberName) {
+      if (!slotId || !state?.choices) return null;
+      const entry = Object.entries(state.choices).find(([name, selectedSlotId]) => {
+        return name !== memberName && selectedSlotId === slotId;
+      });
+      return entry ? entry[0] : null;
+    }
+
     function getActiveChoiceMembers() {
       if (!state) return [];
       return state.members.filter(member => state.choices[member.name]);
@@ -1437,6 +1453,13 @@
         return;
       }
 
+      const conflictName = getSlotConflictMember(slot.id, member.name);
+      if (conflictName) {
+        showSlotTakenPopup(conflictName);
+        setStatus("choiceStatus", "이미 선택된 주차입니다. 다른 주차를 선택해주세요.", "error");
+        return;
+      }
+
       pendingConfirm = { memberName: member.name, slotId: slot.id };
       $("confirmMessage").textContent = `${member.name}님의 휴가를 확정하시겠습니까?`;
       $("confirmPreview").innerHTML = `<span class="dot" style="background:${member.color}"></span><b>${escapeHtml(member.name)}</b><span>· ${slot.label} ${formatMD(slot.start)}~${formatMD(slot.end)}</span>`;
@@ -1458,9 +1481,13 @@
         slots = buildSlots(state.settings);
         closeModal("confirmModal");
         pendingConfirm = null;
-        setStatus("choiceStatus", "휴가 일정이 확정되어 달력에 표시되었습니다.", "ok");
         renderAll();
+        setStatus("choiceStatus", "휴가 일정이 확정되어 달력에 표시되었습니다.", "ok");
+        showVacationSuccessPopup();
       } catch (err) {
+        if (String(err.message || "").includes("같은 주에는 2명 이상") || String(err.message || "").includes("선택한 주차")) {
+          alert(err.message);
+        }
         setStatus("choiceStatus", err.message, "error");
       } finally {
         $("confirmOkBtn").disabled = false;

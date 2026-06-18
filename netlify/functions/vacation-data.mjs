@@ -266,6 +266,18 @@ export default async (request) => {
     if (!member) return responseJson({ ok: false, message: "등록되지 않은 팀원입니다." }, 400);
     if (!slot) return responseJson({ ok: false, message: "선택할 수 없는 주차입니다." }, 400);
 
+    const conflict = Object.entries(data.choices || {}).find(([name, selectedSlotId]) => {
+      return name !== memberName && selectedSlotId === slotId;
+    });
+
+    if (conflict) {
+      return responseJson({
+        ok: false,
+        code: "SLOT_ALREADY_TAKEN",
+        message: `이미 ${conflict[0]}님이 선택한 주차입니다. 같은 주에는 2명 이상 신청할 수 없습니다. 다른 주차를 선택해주세요.`
+      }, 409);
+    }
+
     data.choices[memberName] = slotId;
     const saved = await writeData(data);
     return responseJson({ ok: true, data: saved });
