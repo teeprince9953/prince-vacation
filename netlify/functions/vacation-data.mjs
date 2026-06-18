@@ -204,6 +204,11 @@ function requireAdmin(password) {
   return String(password || "") === ADMIN_PASSWORD;
 }
 
+function isRepresentativeName(name) {
+  const clean = String(name || "").replace(/\s+/g, "").trim();
+  return clean === "대표" || clean === "대표님" || clean.includes("대표");
+}
+
 function koreaTodayYMD() {
   const parts = new Intl.DateTimeFormat("en", {
     timeZone: "Asia/Seoul",
@@ -267,14 +272,14 @@ export default async (request) => {
     if (!slot) return responseJson({ ok: false, message: "선택할 수 없는 주차입니다." }, 400);
 
     const selectedMembers = Object.entries(data.choices || {})
-      .filter(([name, selectedSlotId]) => name !== memberName && selectedSlotId === slotId)
+      .filter(([name, selectedSlotId]) => name !== memberName && selectedSlotId === slotId && !isRepresentativeName(name))
       .map(([name]) => name);
 
-    if (selectedMembers.length >= 2) {
+    if (!isRepresentativeName(memberName) && selectedMembers.length >= 2) {
       return responseJson({
         ok: false,
         code: "SLOT_FULL",
-        message: `이미 ${selectedMembers.join(", ")}님이 선택한 주차입니다. 같은 주에는 최대 2명까지 신청할 수 있습니다. 다른 주차를 선택해주세요.`
+        message: `이미 ${selectedMembers.join(", ")}님이 선택한 주차입니다. 같은 주에는 일반 팀원 기준 최대 2명까지 신청할 수 있습니다. 대표는 주차 제한과 상관없이 별도로 표시됩니다.`
       }, 409);
     }
 

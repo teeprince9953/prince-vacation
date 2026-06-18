@@ -639,6 +639,26 @@
       text-shadow: 0 1px 2px rgba(0,0,0,0.22);
     }
 
+    .track.representative .track-name {
+      border-color: #facc15;
+      box-shadow: 0 8px 20px rgba(250,204,21,0.22), 0 5px 12px rgba(15,23,42,0.24);
+    }
+
+    .track.representative .track-name::before {
+      content: "대표";
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 5px;
+      padding: 1px 5px;
+      border-radius: 999px;
+      background: #facc15;
+      color: #111827;
+      font-size: 10px;
+      font-weight: 1000;
+      vertical-align: middle;
+    }
+
     .locked-help {
       margin-top: 10px;
       padding: 10px 11px;
@@ -1052,6 +1072,21 @@
       return state.members.find(member => member.name === name);
     }
 
+    function isRepresentativeName(name) {
+      const clean = String(name || "").replace(/\s+/g, "").trim();
+      return clean === "대표" || clean === "대표님" || clean.includes("대표");
+    }
+
+    function isRepresentativeMember(memberOrName) {
+      const name = typeof memberOrName === "string" ? memberOrName : memberOrName?.name;
+      return isRepresentativeName(name);
+    }
+
+    function getNormalSlotSelectedMembers(slotId, excludeMemberName = "") {
+      return getSlotSelectedMembers(slotId, excludeMemberName)
+        .filter(name => !isRepresentativeMember(name));
+    }
+
     function todayYMD() {
       return toYMD(new Date());
     }
@@ -1068,8 +1103,8 @@
     function showSlotFullPopup(conflictNames) {
       const names = Array.isArray(conflictNames) ? conflictNames.join(", ") : String(conflictNames || "다른 팀원");
       alert(`이미 ${names}님이 선택한 주차입니다.
-같은 주에는 최대 2명까지 신청할 수 있습니다.
-다른 주차를 선택해주세요.`);
+같은 주에는 일반 팀원 기준 최대 2명까지 신청할 수 있습니다.
+대표는 주차 제한과 상관없이 별도로 표시됩니다.`);
     }
 
     function showVacationSuccessPopup() {
@@ -1084,7 +1119,8 @@
     }
 
     function isSlotFullForMember(slotId, memberName) {
-      return getSlotSelectedMembers(slotId, memberName).length >= 2;
+      if (isRepresentativeMember(memberName)) return false;
+      return getNormalSlotSelectedMembers(slotId, memberName).length >= 2;
     }
 
     function getActiveChoiceMembers() {
@@ -1151,7 +1187,7 @@
         if (!slotId) return;
         counts.set(slotId, (counts.get(slotId) || 0) + 1);
       });
-      return Math.max(1, Math.min(2, ...Array.from(counts.values()), 1));
+      return Math.max(1, ...Array.from(counts.values()), 1);
     }
 
     function getTrackRowIndex(memberName, slotId) {
@@ -1159,6 +1195,9 @@
         .filter(([name, selectedSlotId]) => selectedSlotId === slotId)
         .map(([name]) => name)
         .sort((a, b) => {
+          const ar = isRepresentativeMember(a) ? 1 : 0;
+          const br = isRepresentativeMember(b) ? 1 : 0;
+          if (ar !== br) return ar - br;
           const ai = state.members.findIndex(member => member.name === a);
           const bi = state.members.findIndex(member => member.name === b);
           return ai - bi;
@@ -1235,14 +1274,18 @@
 
     function renderSlotSelect() {
       const select = $("slotSelect");
+      const isRepresentative = isRepresentativeMember(selectedMemberName);
       select.innerHTML = `<option value="">주차를 선택하세요</option>` + slots.map(slot => {
-        const selectedNames = getSlotSelectedMembers(slot.id, selectedMemberName);
-        const isFull = selectedNames.length >= 2;
+        const normalNames = getNormalSlotSelectedMembers(slot.id, selectedMemberName);
+        const representativeNames = getSlotSelectedMembers(slot.id, selectedMemberName)
+          .filter(name => isRepresentativeMember(name));
+        const isFull = !isRepresentative && normalNames.length >= 2;
         const selected = selectedSlotId === slot.id ? "selected" : "";
         const disabled = isFull ? "disabled" : "";
-        const countLabel = ` · 현재 ${selectedNames.length}/2명`;
-        const fullLabel = isFull ? " · 마감" : "";
-        return `<option value="${slot.id}" ${selected} ${disabled}>${slot.label} (${formatMD(slot.start)}~${formatMD(slot.end)})${countLabel}${fullLabel}</option>`;
+        const countLabel = ` · 일반 ${normalNames.length}/2명`;
+        const repLabel = representativeNames.length ? ` · 대표 ${representativeNames.length}명 별도` : "";
+        const fullLabel = isFull ? " · 일반 마감" : "";
+        return `<option value="${slot.id}" ${selected} ${disabled}>${slot.label} (${formatMD(slot.start)}~${formatMD(slot.end)})${countLabel}${repLabel}${fullLabel}</option>`;
       }).join("");
     }
 
@@ -1346,7 +1389,7 @@
         const center = addDays(start, Math.floor((end - start) / (2 * 24 * 60 * 60 * 1000)));
         return {
           member,
-          rowIndex: Math.min(1, getTrackRowIndex(member.name, slotId)),
+          rowIndex: getTrackRowIndex(member.name, slotId),
           slot,
           isStart: ymd === slot.start,
           isEnd: ymd === slot.end,
@@ -1407,7 +1450,7 @@
           const tracks = getChoiceInfoForDate(ymd).map(info => {
             const top = 30 + info.rowIndex * 28;
             return `
-              <div class="track ${info.isStart ? "start" : ""} ${info.isEnd ? "end" : ""}" style="top:${top}px;--track-color:${info.member.color}">
+              <div class="track ${isRepresentativeMember(info.member) ? "representative" : ""} ${info.isStart ? "start" : ""} ${info.isEnd ? "end" : ""}" style="top:${top}px;--track-color:${info.member.color}">
                 <span class="track-line"></span>
                 ${info.isStart ? `<span class="arrow arrow-left"></span>` : ""}
                 ${info.isEnd ? `<span class="arrow arrow-right"></span>` : ""}
@@ -1501,10 +1544,10 @@
         return;
       }
 
-      const selectedNames = getSlotSelectedMembers(slot.id, member.name);
-      if (selectedNames.length >= 2) {
+      const selectedNames = getNormalSlotSelectedMembers(slot.id, member.name);
+      if (!isRepresentativeMember(member) && selectedNames.length >= 2) {
         showSlotFullPopup(selectedNames);
-        setStatus("choiceStatus", "해당 주차는 이미 2명이 선택했습니다. 다른 주차를 선택해주세요.", "error");
+        setStatus("choiceStatus", "해당 주차는 일반 팀원 2명이 선택했습니다. 대표는 별도로 선택 가능합니다.", "error");
         return;
       }
 
@@ -1533,7 +1576,7 @@
         setStatus("choiceStatus", "휴가 일정이 확정되어 달력에 표시되었습니다.", "ok");
         showVacationSuccessPopup();
       } catch (err) {
-        if (String(err.message || "").includes("같은 주에는 최대 2명") || String(err.message || "").includes("선택한 주차")) {
+        if (String(err.message || "").includes("최대 2명") || String(err.message || "").includes("선택한 주차")) {
           alert(err.message);
         }
         setStatus("choiceStatus", err.message, "error");
