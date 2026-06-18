@@ -1,0 +1,1600 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>2026년 프린스 하계휴가 일정</title>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --card: #ffffff;
+      --text: #172033;
+      --muted: #667085;
+      --line: #e5e7eb;
+      --primary: #2457d6;
+      --primary-dark: #1e40af;
+      --danger: #ef4444;
+      --success: #16a34a;
+      --soft: #f2f4f7;
+      --shadow: 0 14px 40px rgba(15, 23, 42, 0.09);
+      --radius: 20px;
+      --member-count: 5;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Pretendard", "Noto Sans KR", Arial, sans-serif;
+      background: linear-gradient(180deg, #f8fafc 0%, var(--bg) 34%, #eef2f8 100%);
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    button, input, select, textarea {
+      font: inherit;
+    }
+
+    button {
+      border: 0;
+      border-radius: 14px;
+      padding: 11px 14px;
+      background: var(--primary);
+      color: #fff;
+      font-weight: 900;
+      cursor: pointer;
+      transition: 0.16s ease;
+      box-shadow: 0 8px 18px rgba(36, 87, 214, 0.16);
+    }
+
+    button:hover { background: var(--primary-dark); transform: translateY(-1px); }
+    button:disabled { opacity: 0.52; cursor: not-allowed; transform: none; }
+
+    button.light {
+      color: #111827;
+      background: #fff;
+      border: 1px solid var(--line);
+      box-shadow: none;
+    }
+
+    button.light:hover { background: #f9fafb; }
+
+    button.black { background: #111827; box-shadow: none; }
+    button.black:hover { background: #030712; }
+
+    button.danger { background: var(--danger); box-shadow: none; }
+    button.danger:hover { background: #dc2626; }
+
+    input, select, textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 11px 12px;
+      background: #fff;
+      color: var(--text);
+      outline: none;
+      font-size: 14px;
+      transition: 0.16s ease;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(36, 87, 214, 0.10);
+    }
+
+    textarea {
+      min-height: 110px;
+      resize: vertical;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 12px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 13px;
+      color: #344054;
+      font-weight: 900;
+    }
+
+    .wrap {
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 24px 18px 60px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .titlebox h1 {
+      margin: 0;
+      font-size: clamp(25px, 3.2vw, 42px);
+      letter-spacing: -0.055em;
+      line-height: 1.16;
+    }
+
+    .titlebox p {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .top-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .deadline-banner {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 16px;
+      padding: 15px 18px;
+      border: 1px solid #f8c471;
+      border-radius: 20px;
+      background: linear-gradient(135deg, #fff7ed, #fffbeb);
+      box-shadow: 0 10px 28px rgba(245, 158, 11, 0.12);
+    }
+
+    .deadline-icon {
+      width: 46px;
+      height: 46px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: #f59e0b;
+      color: #fff;
+      font-size: 24px;
+      font-weight: 900;
+    }
+
+    .deadline-banner strong {
+      display: block;
+      font-size: clamp(18px, 2vw, 25px);
+      letter-spacing: -0.04em;
+      color: #92400e;
+    }
+
+    .deadline-banner span {
+      display: block;
+      color: #9a3412;
+      font-size: 14px;
+      margin-top: 2px;
+    }
+
+    .sync-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 7px 10px;
+      border: 1px solid rgba(146, 64, 14, 0.18);
+      border-radius: 999px;
+      background: #fff;
+      color: #92400e;
+      font-size: 12px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .card {
+      border: 1px solid var(--line);
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .panel {
+      padding: 18px;
+    }
+
+    .panel + .panel { margin-top: 14px; }
+
+    .panel h2 {
+      margin: 0 0 14px;
+      font-size: 19px;
+      letter-spacing: -0.04em;
+    }
+
+    .field { margin-bottom: 12px; }
+
+    .field-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    .choice-card {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 14px;
+      background: #fbfcff;
+    }
+
+    .dropdown {
+      position: relative;
+      margin-bottom: 12px;
+    }
+
+    .dropdown-toggle {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      color: #111827;
+      background: #fff;
+      border: 1px solid var(--line);
+      box-shadow: none;
+      text-align: left;
+    }
+
+    .dropdown-toggle:hover { background: #f9fafb; }
+
+    .dropdown-menu {
+      display: none;
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: calc(100% + 8px);
+      z-index: 30;
+      padding: 8px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: #fff;
+      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.14);
+      max-height: 260px;
+      overflow: auto;
+    }
+
+    .dropdown.open .dropdown-menu { display: grid; gap: 6px; }
+
+    .member-option {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 10px 11px;
+      color: #111827;
+      background: #fff;
+      border: 1px solid transparent;
+      border-radius: 12px;
+      box-shadow: none;
+      text-align: left;
+    }
+
+    .member-option:hover {
+      background: #f8fafc;
+      border-color: var(--line);
+    }
+
+    .dot {
+      width: 13px;
+      height: 13px;
+      border-radius: 50%;
+      display: inline-block;
+      flex: 0 0 auto;
+      border: 2px solid #fff;
+      box-shadow: 0 0 0 1px rgba(17, 24, 39, 0.14);
+    }
+
+    .selected-preview {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 10px 0 0;
+      padding: 9px 10px;
+      border-radius: 12px;
+      background: #fff;
+      border: 1px dashed #cbd5e1;
+      color: #475467;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .mini-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      overflow: hidden;
+      border-radius: 14px;
+    }
+
+    .mini-table th, .mini-table td {
+      border-bottom: 1px solid var(--line);
+      padding: 9px 8px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .mini-table th {
+      background: #f8fafc;
+      font-size: 12px;
+      color: #475467;
+    }
+
+    .mini-table tr:last-child td { border-bottom: 0; }
+
+    .choice-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .choice-item {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      align-items: center;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #fff;
+    }
+
+    .choice-item strong {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+    }
+
+    .choice-item small {
+      display: block;
+      color: var(--muted);
+      margin-top: 3px;
+    }
+
+    .admin-area {
+      display: none;
+    }
+
+    .admin-area.open {
+      display: block;
+    }
+
+    .admin-note {
+      padding: 12px;
+      background: #eef4ff;
+      border: 1px solid #c7d7fe;
+      border-radius: 16px;
+      color: #1d4ed8;
+      font-size: 13px;
+      margin-bottom: 12px;
+    }
+
+    .member-admin-list {
+      display: grid;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .member-admin-row {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 9px;
+      align-items: center;
+      padding: 9px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #fff;
+    }
+
+    .member-admin-row input[type="color"] {
+      width: 42px;
+      height: 38px;
+      padding: 2px;
+      border-radius: 11px;
+    }
+
+    .main-card {
+      overflow: hidden;
+    }
+
+    .calendar-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 18px;
+      border-bottom: 1px solid var(--line);
+      background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    }
+
+    .calendar-head h2 {
+      margin: 0;
+      font-size: 22px;
+      letter-spacing: -0.045em;
+    }
+
+    .calendar-head p {
+      margin: 5px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .calendar-badges {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 7px;
+    }
+
+    .calendar-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 10px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: #475467;
+      font-size: 12px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .calendar-badge.deadline {
+      border-color: #fbbf24;
+      color: #92400e;
+      background: #fffbeb;
+    }
+
+    .months {
+      display: grid;
+      gap: 18px;
+      padding: 18px;
+    }
+
+    .month {
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: #fff;
+    }
+
+    .month-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      padding: 13px 15px;
+      background: #111827;
+      color: #fff;
+    }
+
+    .month-title strong {
+      font-size: 18px;
+      letter-spacing: -0.03em;
+    }
+
+    .month-title span {
+      color: rgba(255,255,255,0.78);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .week-labels, .days {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+    }
+
+    .week-labels div {
+      padding: 10px 4px;
+      background: #f8fafc;
+      border-bottom: 1px solid var(--line);
+      color: #475467;
+      font-size: 13px;
+      font-weight: 900;
+      text-align: center;
+    }
+
+    .week-labels div:first-child { color: #dc2626; }
+    .week-labels div:last-child { color: #2563eb; }
+
+    .day {
+      position: relative;
+      min-height: max(128px, calc(80px + var(--member-count) * 24px));
+      padding: 7px;
+      border-right: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      background: #fff;
+      overflow: hidden;
+    }
+
+    .day:nth-child(7n) { border-right: 0; }
+
+    .day.outside {
+      background: #f9fafb;
+      color: #c6cad3;
+    }
+
+    .day.out-period {
+      background-image: repeating-linear-gradient(135deg, rgba(148, 163, 184, 0.08) 0 8px, rgba(255,255,255,0.02) 8px 16px);
+    }
+
+    .day.today {
+      outline: 3px solid rgba(36, 87, 214, 0.25);
+      outline-offset: -3px;
+    }
+
+    .day.deadline-day {
+      background: #fffbeb;
+      outline: 3px solid rgba(245, 158, 11, 0.28);
+      outline-offset: -3px;
+    }
+
+    .date-num {
+      position: relative;
+      z-index: 5;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-weight: 1000;
+      font-size: 14px;
+    }
+
+    .deadline-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      padding: 3px 6px;
+      border-radius: 999px;
+      background: #f59e0b;
+      color: #fff;
+      font-size: 10px;
+      font-weight: 1000;
+    }
+
+    .track {
+      position: absolute;
+      z-index: 4;
+      left: 0;
+      right: 0;
+      height: 24px;
+      pointer-events: none;
+    }
+
+    .track-line {
+      position: absolute;
+      left: -1px;
+      right: -1px;
+      top: 50%;
+      height: 6px;
+      transform: translateY(-50%);
+      background: currentColor;
+      opacity: 0.84;
+      box-shadow: 0 4px 10px rgba(15, 23, 42, 0.14);
+    }
+
+    .track.start .track-line { left: 14px; border-radius: 999px 0 0 999px; }
+    .track.end .track-line { right: 14px; border-radius: 0 999px 999px 0; }
+    .track.start.end .track-line { left: 14px; right: 14px; border-radius: 999px; }
+
+    .arrow {
+      position: absolute;
+      top: 50%;
+      width: 0;
+      height: 0;
+      transform: translateY(-50%);
+      filter: drop-shadow(0 3px 4px rgba(15,23,42,0.12));
+    }
+
+    .arrow-left {
+      left: 2px;
+      border-top: 8px solid transparent;
+      border-bottom: 8px solid transparent;
+      border-right: 14px solid currentColor;
+    }
+
+    .arrow-right {
+      right: 2px;
+      border-top: 8px solid transparent;
+      border-bottom: 8px solid transparent;
+      border-left: 14px solid currentColor;
+    }
+
+    .track-name {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      max-width: 96%;
+      padding: 3px 9px 4px;
+      border-radius: 999px;
+      color: #fff;
+      background: currentColor;
+      box-shadow: 0 5px 12px rgba(15,23,42,0.18);
+      font-size: 15px;
+      font-weight: 1000;
+      letter-spacing: -0.04em;
+      white-space: nowrap;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.18);
+    }
+
+    .loading-cover {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      display: grid;
+      place-items: center;
+      background: rgba(248,250,252,0.86);
+      backdrop-filter: blur(4px);
+      color: #111827;
+      font-weight: 900;
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 900;
+      background: rgba(15, 23, 42, 0.55);
+      padding: 18px;
+    }
+
+    .modal-backdrop.open { display: flex; }
+
+    .modal {
+      width: min(460px, 100%);
+      border-radius: 22px;
+      background: #fff;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.25);
+      overflow: hidden;
+    }
+
+    .modal-head {
+      padding: 18px 18px 10px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .modal-head h3 {
+      margin: 0;
+      font-size: 21px;
+      letter-spacing: -0.04em;
+    }
+
+    .modal-body {
+      padding: 16px 18px;
+    }
+
+    .modal-body p {
+      margin: 0 0 12px;
+      color: #344054;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      padding: 14px 18px 18px;
+    }
+
+    .status {
+      min-height: 20px;
+      margin-top: 10px;
+      font-size: 13px;
+      color: var(--muted);
+      font-weight: 800;
+    }
+
+    .status.ok { color: var(--success); }
+    .status.error { color: var(--danger); }
+
+    @media print {
+      body { background: #fff; }
+      .side, .top-actions, .deadline-banner, .loading-cover, .modal-backdrop { display: none !important; }
+      .wrap { max-width: none; padding: 0; }
+      .layout { grid-template-columns: 1fr; }
+      .card, .month { box-shadow: none; border-radius: 0; }
+      .day { min-height: 95px; }
+    }
+
+    @media (max-width: 980px) {
+      .layout { grid-template-columns: 1fr; }
+      .calendar-head { flex-direction: column; }
+      .calendar-badges { justify-content: flex-start; }
+      .deadline-banner { grid-template-columns: auto 1fr; }
+      .sync-pill { grid-column: 1 / -1; width: fit-content; }
+    }
+
+    @media (max-width: 620px) {
+      .wrap { padding: 18px 12px 40px; }
+      .topbar { flex-direction: column; }
+      .top-actions { justify-content: flex-start; }
+      .field-grid { grid-template-columns: 1fr; }
+      .months { padding: 10px; gap: 12px; }
+      .day {
+        min-height: max(95px, calc(58px + var(--member-count) * 21px));
+        padding: 5px;
+      }
+      .track { height: 20px; }
+      .track-line { height: 5px; }
+      .track-name { font-size: 12px; padding: 2px 6px; }
+      .arrow-left { border-top-width: 7px; border-bottom-width: 7px; border-right-width: 11px; }
+      .arrow-right { border-top-width: 7px; border-bottom-width: 7px; border-left-width: 11px; }
+      .date-num { font-size: 12px; }
+    }
+  </style>
+</head>
+<body>
+  <div id="loadingCover" class="loading-cover">일정표를 불러오는 중입니다.</div>
+
+  <div class="wrap">
+    <header class="topbar">
+      <div class="titlebox">
+        <h1 id="pageTitle">2026년 프린스 하계휴가 일정</h1>
+        <p>팀원별 주단위 휴가 선택 · 공용 저장 · 관리자 기간 설정 · 팀원 추가 가능</p>
+      </div>
+      <div class="top-actions">
+        <button class="light" id="refreshBtn">새로고침</button>
+        <button class="black" id="adminOpenBtn">관리자 설정</button>
+      </div>
+    </header>
+
+    <section class="deadline-banner">
+      <div class="deadline-icon">!</div>
+      <div>
+        <strong id="deadlineTitle">휴가 체크 마감일</strong>
+        <span id="deadlineSub">마감일을 불러오는 중입니다.</span>
+      </div>
+      <div class="sync-pill" id="syncStatus">공용 저장 연결 중</div>
+    </section>
+
+    <div class="layout">
+      <aside class="side">
+        <section class="card panel">
+          <h2>팀원 휴가 선택</h2>
+          <div class="choice-card">
+            <label>팀원 선택</label>
+            <div class="dropdown" id="memberDropdown">
+              <button type="button" class="dropdown-toggle" id="memberDropdownBtn">
+                <span id="selectedMemberText">팀원명을 선택하세요</span>
+                <span>▼</span>
+              </button>
+              <div class="dropdown-menu" id="memberDropdownMenu"></div>
+            </div>
+
+            <div class="field">
+              <label for="slotSelect">휴가 주차 선택</label>
+              <select id="slotSelect">
+                <option value="">주차를 선택하세요</option>
+              </select>
+            </div>
+
+            <div class="selected-preview" id="choicePreview">팀원과 주차를 선택하면 여기에 표시됩니다.</div>
+            <div class="btn-row">
+              <button id="choiceCompleteBtn">선택 완료</button>
+              <button class="light" id="clearMemberChoiceBtn">선택 취소</button>
+            </div>
+            <div class="status" id="choiceStatus"></div>
+          </div>
+        </section>
+
+        <section class="card panel">
+          <h2>현재 확정 현황</h2>
+          <div class="choice-list" id="choiceList"></div>
+        </section>
+
+        <section class="card panel admin-area" id="adminArea">
+          <h2>관리자 설정</h2>
+          <div class="admin-note">관리자 설정은 비밀번호 확인 후에만 열립니다. 저장과 초기화 작업도 서버에서 비밀번호를 다시 검사합니다.</div>
+
+          <div class="field-grid">
+            <div class="field">
+              <label for="adminYear">연도</label>
+              <input id="adminYear" type="number" min="2024" max="2100" />
+            </div>
+            <div class="field">
+              <label for="adminTitle">제목</label>
+              <input id="adminTitle" type="text" />
+            </div>
+          </div>
+
+          <div class="field-grid">
+            <div class="field">
+              <label for="adminStart">휴가 시작일</label>
+              <input id="adminStart" type="date" />
+            </div>
+            <div class="field">
+              <label for="adminEnd">휴가 종료일</label>
+              <input id="adminEnd" type="date" />
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="adminDeadline">휴가 체크 마감일</label>
+            <input id="adminDeadline" type="date" />
+          </div>
+
+          <div class="field">
+            <label for="adminMemo">상단 메모</label>
+            <input id="adminMemo" type="text" />
+          </div>
+
+          <div class="btn-row">
+            <button class="light" id="autoPeriodBtn">해당 연도 자동 기간 적용</button>
+          </div>
+
+          <hr style="border:0;border-top:1px solid var(--line);margin:16px 0;" />
+
+          <h2 style="font-size:17px;margin-bottom:10px;">팀원 관리</h2>
+          <div class="field">
+            <label for="newMemberName">추가할 팀원명</label>
+            <input id="newMemberName" type="text" placeholder="예: 홍길동" />
+          </div>
+          <div class="btn-row">
+            <button class="light" id="addMemberBtn">팀원 추가</button>
+          </div>
+          <div class="member-admin-list" id="memberAdminList"></div>
+
+          <div class="btn-row">
+            <button id="saveAdminBtn">관리자 설정 저장</button>
+            <button class="danger" id="resetChoicesBtn">휴가 선택 전체 초기화</button>
+            <button class="light" id="adminCloseBtn">닫기</button>
+          </div>
+          <div class="status" id="adminStatus"></div>
+        </section>
+
+        <section class="card panel admin-area" id="backupArea">
+          <h2>백업 / 복원</h2>
+          <div class="btn-row">
+            <button class="light" id="exportBtn">JSON 내보내기</button>
+            <button class="light" id="importBtn">JSON 복원</button>
+          </div>
+          <textarea id="backupBox" placeholder="내보낸 JSON 또는 복원할 JSON이 표시됩니다."></textarea>
+        </section>
+      </aside>
+
+      <main class="card main-card">
+        <div class="calendar-head">
+          <div>
+            <h2 id="calendarTitle">2026년 프린스 하계휴가 일정</h2>
+            <p id="calendarRange">기간을 불러오는 중입니다.</p>
+          </div>
+          <div class="calendar-badges" id="calendarBadges"></div>
+        </div>
+        <div class="months" id="months"></div>
+      </main>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="passwordModal">
+    <div class="modal">
+      <div class="modal-head"><h3>관리자 비밀번호</h3></div>
+      <div class="modal-body">
+        <p>관리자 설정을 열려면 비밀번호를 입력하세요.</p>
+        <input id="adminPasswordInput" type="password" placeholder="비밀번호 입력" />
+        <div class="status" id="passwordStatus"></div>
+      </div>
+      <div class="modal-actions">
+        <button class="light" id="passwordCancelBtn">닫기</button>
+        <button id="passwordConfirmBtn">확인</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="confirmModal">
+    <div class="modal">
+      <div class="modal-head"><h3>확정하시겠습니까?</h3></div>
+      <div class="modal-body">
+        <p id="confirmMessage">선택한 휴가 일정을 확정하시겠습니까?</p>
+        <div class="selected-preview" id="confirmPreview"></div>
+      </div>
+      <div class="modal-actions">
+        <button class="light" id="confirmCancelBtn">재확인</button>
+        <button id="confirmOkBtn">확정</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_URL = "/.netlify/functions/vacation-data";
+    const LOCAL_ADMIN_KEY = "princeVacationAdminUnlocked";
+    const COLOR_PALETTE = [
+      "#ef4444", "#f97316", "#22c55e", "#3b82f6", "#8b5cf6",
+      "#ec4899", "#14b8a6", "#f59e0b", "#6366f1", "#06b6d4",
+      "#84cc16", "#d946ef", "#0ea5e9", "#fb7185", "#10b981"
+    ];
+
+    let state = null;
+    let slots = [];
+    let selectedMemberName = "";
+    let selectedSlotId = "";
+    let adminPassword = sessionStorage.getItem(LOCAL_ADMIN_KEY) || "";
+    let adminMembersDraft = [];
+    let pendingConfirm = null;
+    let pollingTimer = null;
+
+    const $ = (id) => document.getElementById(id);
+
+    function parseDate(value) {
+      const [y, m, d] = String(value).split("-").map(Number);
+      return new Date(y, m - 1, d);
+    }
+
+    function toYMD(date) {
+      const y = date.getFullYear();
+      const m = String(date.getMonth() + 1).padStart(2, "0");
+      const d = String(date.getDate()).padStart(2, "0");
+      return `${y}-${m}-${d}`;
+    }
+
+    function addDays(date, days) {
+      const next = new Date(date);
+      next.setDate(next.getDate() + days);
+      return next;
+    }
+
+    function formatMD(value) {
+      const date = typeof value === "string" ? parseDate(value) : value;
+      return `${date.getMonth() + 1}/${date.getDate()}`;
+    }
+
+    function formatFull(value) {
+      const date = typeof value === "string" ? parseDate(value) : value;
+      return `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일`;
+    }
+
+    function getMondayOnOrAfter(date) {
+      const d = new Date(date);
+      const day = d.getDay();
+      const diff = day === 1 ? 0 : (8 - day) % 7;
+      d.setDate(d.getDate() + diff);
+      return d;
+    }
+
+    function getLastMondayOfMonth(year, monthIndex) {
+      const last = new Date(year, monthIndex + 1, 0);
+      const day = last.getDay();
+      const diff = day === 0 ? 6 : day - 1;
+      return addDays(last, -diff);
+    }
+
+    function getWeekOfMonthByMonday(monday) {
+      const first = new Date(monday.getFullYear(), monday.getMonth(), 1);
+      const firstMonday = getMondayOnOrAfter(first);
+      if (monday < firstMonday) return 1;
+      return Math.floor((monday - firstMonday) / (7 * 24 * 60 * 60 * 1000)) + 1;
+    }
+
+    function buildSlotLabel(monday) {
+      const month = monday.getMonth() + 1;
+      const lastMonday = getLastMondayOfMonth(monday.getFullYear(), monday.getMonth());
+      if (toYMD(monday) === toYMD(lastMonday)) return `${month}월 마지막주`;
+      return `${month}월 ${getWeekOfMonthByMonday(monday)}주차`;
+    }
+
+    function buildSlots(settings) {
+      const start = parseDate(settings.startDate);
+      const end = parseDate(settings.endDate);
+      if (start > end) return [];
+
+      const result = [];
+      const firstMonday = getMondayOnOrAfter(addDays(start, -6));
+      const seen = new Set();
+      let monday = new Date(firstMonday);
+
+      while (monday <= addDays(end, 6)) {
+        const slotStart = addDays(monday, -2);
+        const slotEnd = addDays(monday, 6);
+        const overlaps = slotStart <= end && slotEnd >= start;
+
+        if (overlaps) {
+          const id = toYMD(monday);
+          if (!seen.has(id)) {
+            result.push({
+              id,
+              label: buildSlotLabel(monday),
+              start: toYMD(slotStart),
+              end: toYMD(slotEnd),
+              startDate: slotStart,
+              endDate: slotEnd
+            });
+            seen.add(id);
+          }
+        }
+        monday = addDays(monday, 7);
+      }
+      return result;
+    }
+
+    function getSlot(id) {
+      return slots.find(slot => slot.id === id);
+    }
+
+    function getMember(name) {
+      return state.members.find(member => member.name === name);
+    }
+
+    function setStatus(id, text, type = "") {
+      const el = $(id);
+      el.textContent = text || "";
+      el.className = `status ${type}`.trim();
+    }
+
+    function closeDropdown() {
+      $("memberDropdown").classList.remove("open");
+    }
+
+    function openModal(id) {
+      $(id).classList.add("open");
+    }
+
+    function closeModal(id) {
+      $(id).classList.remove("open");
+    }
+
+    async function apiPost(payload) {
+      const res = await fetch(API_URL, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      const json = await res.json();
+      if (!json.ok) throw new Error(json.message || "저장에 실패했습니다.");
+      return json.data;
+    }
+
+    async function loadData({ silent = false } = {}) {
+      try {
+        if (!silent) $("syncStatus").textContent = "공용 저장 불러오는 중";
+        const res = await fetch(`${API_URL}?t=${Date.now()}`, { cache: "no-store" });
+        const json = await res.json();
+        if (!json.ok) throw new Error(json.message || "불러오기 실패");
+        state = json.data;
+        slots = buildSlots(state.settings);
+        document.documentElement.style.setProperty("--member-count", String(Math.max(1, state.members.length)));
+        renderAll();
+        $("loadingCover").style.display = "none";
+        $("syncStatus").textContent = `공용 저장 연결됨 · ${new Date().toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" })}`;
+      } catch (err) {
+        $("loadingCover").style.display = "none";
+        $("syncStatus").textContent = "공용 저장 연결 실패";
+        setStatus("choiceStatus", err.message, "error");
+      }
+    }
+
+    function renderAll() {
+      renderTitles();
+      renderDeadline();
+      renderMemberDropdown();
+      renderSlotSelect();
+      renderChoicePreview();
+      renderChoiceList();
+      renderAdminDraft();
+      renderCalendarBadges();
+      renderCalendar();
+    }
+
+    function renderTitles() {
+      const title = `${state.settings.year}년 ${state.settings.title}`;
+      document.title = title;
+      $("pageTitle").textContent = title;
+      $("calendarTitle").textContent = title;
+      $("calendarRange").textContent = `휴가 기간: ${formatFull(state.settings.startDate)} ~ ${formatFull(state.settings.endDate)}`;
+    }
+
+    function renderDeadline() {
+      $("deadlineTitle").textContent = `휴가 체크 마감일: ${formatFull(state.settings.checkDeadline)}`;
+      $("deadlineSub").textContent = `${state.settings.memo || "팀원별 주단위 1회 선택"} · 마감일은 달력에도 노란색으로 표시됩니다.`;
+    }
+
+    function renderMemberDropdown() {
+      const menu = $("memberDropdownMenu");
+      menu.innerHTML = state.members.map(member => `
+        <button type="button" class="member-option" data-member="${escapeHtml(member.name)}">
+          <span class="dot" style="background:${member.color}"></span>
+          <b>${escapeHtml(member.name)}</b>
+        </button>
+      `).join("");
+
+      menu.querySelectorAll(".member-option").forEach(btn => {
+        btn.addEventListener("click", () => {
+          selectedMemberName = btn.dataset.member;
+          closeDropdown();
+          renderMemberSelectionText();
+          renderChoicePreview();
+        });
+      });
+
+      renderMemberSelectionText();
+    }
+
+    function renderMemberSelectionText() {
+      const member = getMember(selectedMemberName);
+      if (!member) {
+        $("selectedMemberText").innerHTML = "팀원명을 선택하세요";
+        return;
+      }
+      $("selectedMemberText").innerHTML = `<span class="dot" style="background:${member.color}"></span>${escapeHtml(member.name)}`;
+    }
+
+    function renderSlotSelect() {
+      const select = $("slotSelect");
+      select.innerHTML = `<option value="">주차를 선택하세요</option>` + slots.map(slot => `
+        <option value="${slot.id}" ${selectedSlotId === slot.id ? "selected" : ""}>${slot.label} (${formatMD(slot.start)}~${formatMD(slot.end)})</option>
+      `).join("");
+    }
+
+    function renderChoicePreview() {
+      const member = getMember(selectedMemberName);
+      const slot = getSlot(selectedSlotId);
+      const preview = $("choicePreview");
+
+      if (!member && !slot) {
+        preview.textContent = "팀원과 주차를 선택하면 여기에 표시됩니다.";
+        return;
+      }
+
+      preview.innerHTML = `
+        ${member ? `<span class="dot" style="background:${member.color}"></span><b>${escapeHtml(member.name)}</b>` : "팀원 미선택"}
+        ${slot ? `<span>· ${slot.label} ${formatMD(slot.start)}~${formatMD(slot.end)}</span>` : `<span>· 주차 미선택</span>`}
+      `;
+    }
+
+    function renderChoiceList() {
+      const list = $("choiceList");
+      const rows = state.members.map(member => {
+        const slot = getSlot(state.choices[member.name]);
+        return `
+          <div class="choice-item">
+            <div>
+              <strong><span class="dot" style="background:${member.color}"></span>${escapeHtml(member.name)}</strong>
+              <small>${slot ? `${slot.label} · ${formatMD(slot.start)}~${formatMD(slot.end)}` : "아직 선택하지 않음"}</small>
+            </div>
+          </div>
+        `;
+      }).join("");
+      list.innerHTML = rows || "<div class='selected-preview'>등록된 팀원이 없습니다.</div>";
+    }
+
+    function renderAdminDraft() {
+      if (!adminMembersDraft.length && state) adminMembersDraft = JSON.parse(JSON.stringify(state.members));
+
+      $("adminYear").value = state.settings.year;
+      $("adminTitle").value = state.settings.title;
+      $("adminStart").value = state.settings.startDate;
+      $("adminEnd").value = state.settings.endDate;
+      $("adminDeadline").value = state.settings.checkDeadline;
+      $("adminMemo").value = state.settings.memo || "";
+      renderAdminMemberList();
+    }
+
+    function renderAdminMemberList() {
+      const list = $("memberAdminList");
+      list.innerHTML = adminMembersDraft.map((member, index) => `
+        <div class="member-admin-row" data-index="${index}">
+          <input type="color" value="${member.color}" data-action="color" />
+          <input type="text" value="${escapeAttr(member.name)}" data-action="name" />
+          <button type="button" class="light" data-action="remove">삭제</button>
+        </div>
+      `).join("");
+
+      list.querySelectorAll(".member-admin-row").forEach(row => {
+        const index = Number(row.dataset.index);
+        row.querySelector('[data-action="color"]').addEventListener("input", (e) => {
+          adminMembersDraft[index].color = e.target.value;
+        });
+        row.querySelector('[data-action="name"]').addEventListener("input", (e) => {
+          adminMembersDraft[index].name = e.target.value;
+        });
+        row.querySelector('[data-action="remove"]').addEventListener("click", () => {
+          const target = adminMembersDraft[index]?.name || "선택한 팀원";
+          if (!confirm(`${target} 팀원을 삭제할까요? 해당 팀원의 휴가 선택도 함께 제거됩니다.`)) return;
+          adminMembersDraft.splice(index, 1);
+          renderAdminMemberList();
+        });
+      });
+    }
+
+    function renderCalendarBadges() {
+      const badges = $("calendarBadges");
+      const memberBadges = state.members.map(member => `
+        <span class="calendar-badge"><span class="dot" style="background:${member.color}"></span>${escapeHtml(member.name)}</span>
+      `).join("");
+      badges.innerHTML = `<span class="calendar-badge deadline">마감일 ${formatMD(state.settings.checkDeadline)}</span>${memberBadges}`;
+    }
+
+    function getChoiceInfoForDate(ymd) {
+      return state.members.map((member, memberIndex) => {
+        const slotId = state.choices[member.name];
+        const slot = getSlot(slotId);
+        if (!slot || ymd < slot.start || ymd > slot.end) return null;
+
+        const start = parseDate(slot.start);
+        const end = parseDate(slot.end);
+        const center = addDays(start, Math.floor((end - start) / (2 * 24 * 60 * 60 * 1000)));
+        return {
+          member,
+          memberIndex,
+          slot,
+          isStart: ymd === slot.start,
+          isEnd: ymd === slot.end,
+          isCenter: ymd === toYMD(center)
+        };
+      }).filter(Boolean);
+    }
+
+    function renderCalendar() {
+      const start = parseDate(state.settings.startDate);
+      const end = parseDate(state.settings.endDate);
+      const periodMonthStart = new Date(start.getFullYear(), start.getMonth(), 1);
+      const periodMonthEnd = new Date(end.getFullYear(), end.getMonth() + 1, 0);
+      const today = toYMD(new Date());
+      const deadline = state.settings.checkDeadline;
+      const months = [];
+      let cursor = new Date(periodMonthStart);
+
+      while (cursor <= periodMonthEnd) {
+        months.push(new Date(cursor));
+        cursor.setMonth(cursor.getMonth() + 1);
+      }
+
+      const container = $("months");
+      container.innerHTML = "";
+
+      months.forEach(monthDate => {
+        const year = monthDate.getFullYear();
+        const month = monthDate.getMonth();
+        const firstDay = new Date(year, month, 1);
+        const lastDay = new Date(year, month + 1, 0);
+        const gridStart = addDays(firstDay, -firstDay.getDay());
+        const gridEnd = addDays(lastDay, 6 - lastDay.getDay());
+
+        const monthEl = document.createElement("section");
+        monthEl.className = "month";
+        monthEl.innerHTML = `
+          <div class="month-title">
+            <strong>${year}년 ${month + 1}월</strong>
+            <span>휴가 체크 마감일 ${formatMD(deadline)}</span>
+          </div>
+          <div class="week-labels"><div>일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div>토</div></div>
+          <div class="days"></div>
+        `;
+
+        const daysEl = monthEl.querySelector(".days");
+        let d = new Date(gridStart);
+
+        while (d <= gridEnd) {
+          const ymd = toYMD(d);
+          const dayEl = document.createElement("div");
+          dayEl.className = "day";
+          if (d.getMonth() !== month) dayEl.classList.add("outside");
+          if (d < start || d > end) dayEl.classList.add("out-period");
+          if (ymd === today) dayEl.classList.add("today");
+          if (ymd === deadline) dayEl.classList.add("deadline-day");
+
+          const tracks = getChoiceInfoForDate(ymd).map(info => {
+            const top = 34 + info.memberIndex * 26;
+            return `
+              <div class="track ${info.isStart ? "start" : ""} ${info.isEnd ? "end" : ""}" style="top:${top}px;color:${info.member.color}">
+                <span class="track-line"></span>
+                ${info.isStart ? `<span class="arrow arrow-left"></span>` : ""}
+                ${info.isEnd ? `<span class="arrow arrow-right"></span>` : ""}
+                ${info.isCenter ? `<span class="track-name">${escapeHtml(info.member.name)}</span>` : ""}
+              </div>
+            `;
+          }).join("");
+
+          dayEl.innerHTML = `
+            <div class="date-num">
+              <span>${d.getDate()}</span>
+              ${ymd === deadline ? `<span class="deadline-label">마감</span>` : ""}
+            </div>
+            ${tracks}
+          `;
+
+          daysEl.appendChild(dayEl);
+          d = addDays(d, 1);
+        }
+
+        container.appendChild(monthEl);
+      });
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function escapeAttr(value) {
+      return escapeHtml(value).replaceAll("\n", " ");
+    }
+
+    function getAutoPeriod(year) {
+      const julyLastMonday = getLastMondayOfMonth(year, 6);
+      const augustLastMonday = getLastMondayOfMonth(year, 7);
+      return {
+        startDate: toYMD(addDays(julyLastMonday, -2)),
+        endDate: toYMD(addDays(augustLastMonday, 6)),
+        checkDeadline: toYMD(addDays(julyLastMonday, -9))
+      };
+    }
+
+    function normalizeAdminMembersDraft() {
+      const seen = new Set();
+      const normalized = [];
+
+      adminMembersDraft.forEach((member, index) => {
+        const name = String(member.name || "").trim();
+        if (!name || seen.has(name)) return;
+        seen.add(name);
+        normalized.push({
+          name,
+          color: /^#[0-9a-fA-F]{6}$/.test(member.color) ? member.color : COLOR_PALETTE[index % COLOR_PALETTE.length]
+        });
+      });
+      return normalized;
+    }
+
+    $("memberDropdownBtn").addEventListener("click", () => {
+      $("memberDropdown").classList.toggle("open");
+    });
+
+    document.addEventListener("click", (e) => {
+      if (!$("memberDropdown").contains(e.target)) closeDropdown();
+    });
+
+    $("slotSelect").addEventListener("change", (e) => {
+      selectedSlotId = e.target.value;
+      renderChoicePreview();
+    });
+
+    $("choiceCompleteBtn").addEventListener("click", () => {
+      const member = getMember(selectedMemberName);
+      const slot = getSlot(selectedSlotId);
+
+      if (!member) {
+        setStatus("choiceStatus", "팀원명을 먼저 선택해주세요.", "error");
+        return;
+      }
+      if (!slot) {
+        setStatus("choiceStatus", "휴가 주차를 선택해주세요.", "error");
+        return;
+      }
+
+      pendingConfirm = { memberName: member.name, slotId: slot.id };
+      $("confirmMessage").textContent = `${member.name}님의 휴가를 확정하시겠습니까?`;
+      $("confirmPreview").innerHTML = `<span class="dot" style="background:${member.color}"></span><b>${escapeHtml(member.name)}</b><span>· ${slot.label} ${formatMD(slot.start)}~${formatMD(slot.end)}</span>`;
+      openModal("confirmModal");
+    });
+
+    $("confirmCancelBtn").addEventListener("click", () => {
+      pendingConfirm = null;
+      closeModal("confirmModal");
+      setStatus("choiceStatus", "다시 확인 후 선택 완료를 눌러주세요.");
+    });
+
+    $("confirmOkBtn").addEventListener("click", async () => {
+      if (!pendingConfirm) return;
+      try {
+        $("confirmOkBtn").disabled = true;
+        const data = await apiPost({ action: "selectVacation", ...pendingConfirm });
+        state = data;
+        slots = buildSlots(state.settings);
+        closeModal("confirmModal");
+        pendingConfirm = null;
+        setStatus("choiceStatus", "휴가 일정이 확정되어 달력에 표시되었습니다.", "ok");
+        renderAll();
+      } catch (err) {
+        setStatus("choiceStatus", err.message, "error");
+      } finally {
+        $("confirmOkBtn").disabled = false;
+      }
+    });
+
+    $("clearMemberChoiceBtn").addEventListener("click", async () => {
+      const member = getMember(selectedMemberName);
+      if (!member) {
+        setStatus("choiceStatus", "선택 취소할 팀원명을 먼저 선택해주세요.", "error");
+        return;
+      }
+      if (!confirm(`${member.name}님의 휴가 선택을 취소할까요?`)) return;
+      try {
+        const data = await apiPost({ action: "clearVacation", memberName: member.name });
+        state = data;
+        renderAll();
+        setStatus("choiceStatus", "해당 팀원의 휴가 선택이 취소되었습니다.", "ok");
+      } catch (err) {
+        setStatus("choiceStatus", err.message, "error");
+      }
+    });
+
+    $("adminOpenBtn").addEventListener("click", () => {
+      if (adminPassword) {
+        openAdminArea();
+        return;
+      }
+      $("adminPasswordInput").value = "";
+      setStatus("passwordStatus", "");
+      openModal("passwordModal");
+      setTimeout(() => $("adminPasswordInput").focus(), 50);
+    });
+
+    $("passwordCancelBtn").addEventListener("click", () => closeModal("passwordModal"));
+
+    $("passwordConfirmBtn").addEventListener("click", async () => {
+      const value = $("adminPasswordInput").value;
+      if (!value) {
+        setStatus("passwordStatus", "비밀번호를 입력해주세요.", "error");
+        return;
+      }
+
+      try {
+        $("passwordConfirmBtn").disabled = true;
+        await apiPost({ action: "verifyAdmin", adminPassword: value });
+        adminPassword = value;
+        sessionStorage.setItem(LOCAL_ADMIN_KEY, value);
+        closeModal("passwordModal");
+        openAdminArea();
+      } catch (err) {
+        setStatus("passwordStatus", err.message, "error");
+      } finally {
+        $("passwordConfirmBtn").disabled = false;
+      }
+    });
+
+    $("adminPasswordInput").addEventListener("keydown", (e) => {
+      if (e.key === "Enter") $("passwordConfirmBtn").click();
+    });
+
+    function openAdminArea() {
+      adminMembersDraft = JSON.parse(JSON.stringify(state.members));
+      renderAdminDraft();
+      $("adminArea").classList.add("open");
+      $("backupArea").classList.add("open");
+      setStatus("adminStatus", "관리자 설정이 열렸습니다.", "ok");
+    }
+
+    $("adminCloseBtn").addEventListener("click", () => {
+      $("adminArea").classList.remove("open");
+      $("backupArea").classList.remove("open");
+    });
+
+    $("autoPeriodBtn").addEventListener("click", () => {
+      const year = Number($("adminYear").value) || new Date().getFullYear();
+      const period = getAutoPeriod(year);
+      $("adminStart").value = period.startDate;
+      $("adminEnd").value = period.endDate;
+      $("adminDeadline").value = period.checkDeadline;
+      $("adminMemo").value = "7월 마지막주부터 8월 마지막주까지";
+      setStatus("adminStatus", `${year}년 기준 자동 기간을 적용했습니다.`, "ok");
+    });
+
+    $("addMemberBtn").addEventListener("click", () => {
+      const name = $("newMemberName").value.trim();
+      if (!name) {
+        setStatus("adminStatus", "추가할 팀원명을 입력해주세요.", "error");
+        return;
+      }
+      if (adminMembersDraft.some(member => member.name.trim() === name)) {
+        setStatus("adminStatus", "이미 등록된 팀원명입니다.", "error");
+        return;
+      }
+      adminMembersDraft.push({
+        name,
+        color: COLOR_PALETTE[adminMembersDraft.length % COLOR_PALETTE.length]
+      });
+      $("newMemberName").value = "";
+      renderAdminMemberList();
+      setStatus("adminStatus", `${name} 팀원을 추가했습니다. 저장 버튼을 눌러야 서버에 반영됩니다.`, "ok");
+    });
+
+    $("saveAdminBtn").addEventListener("click", async () => {
+      const members = normalizeAdminMembersDraft();
+      if (!members.length) {
+        setStatus("adminStatus", "팀원은 최소 1명 이상 필요합니다.", "error");
+        return;
+      }
+
+      const settings = {
+        year: Number($("adminYear").value),
+        title: $("adminTitle").value.trim() || "프린스 하계휴가 일정",
+        startDate: $("adminStart").value,
+        endDate: $("adminEnd").value,
+        checkDeadline: $("adminDeadline").value,
+        memo: $("adminMemo").value.trim()
+      };
+
+      if (!settings.startDate || !settings.endDate || !settings.checkDeadline) {
+        setStatus("adminStatus", "시작일, 종료일, 마감일을 모두 입력해주세요.", "error");
+        return;
+      }
+      if (parseDate(settings.startDate) > parseDate(settings.endDate)) {
+        setStatus("adminStatus", "휴가 시작일은 종료일보다 빠르거나 같아야 합니다.", "error");
+        return;
+      }
+
+      try {
+        $("saveAdminBtn").disabled = true;
+        const data = await apiPost({ action: "saveSettings", adminPassword, settings, members });
+        state = data;
+        slots = buildSlots(state.settings);
+        adminMembersDraft = JSON.parse(JSON.stringify(state.members));
+        renderAll();
+        setStatus("adminStatus", "관리자 설정이 저장되었습니다.", "ok");
+      } catch (err) {
+        setStatus("adminStatus", err.message, "error");
+      } finally {
+        $("saveAdminBtn").disabled = false;
+      }
+    });
+
+    $("resetChoicesBtn").addEventListener("click", async () => {
+      if (!confirm("모든 팀원의 휴가 선택을 초기화할까요?")) return;
+      try {
+        const data = await apiPost({ action: "resetChoices", adminPassword });
+        state = data;
+        slots = buildSlots(state.settings);
+        renderAll();
+        setStatus("adminStatus", "모든 휴가 선택을 초기화했습니다.", "ok");
+      } catch (err) {
+        setStatus("adminStatus", err.message, "error");
+      }
+    });
+
+    $("exportBtn").addEventListener("click", async () => {
+      const raw = JSON.stringify(state, null, 2);
+      $("backupBox").value = raw;
+      try {
+        await navigator.clipboard.writeText(raw);
+        setStatus("adminStatus", "백업 JSON을 복사했습니다.", "ok");
+      } catch {
+        setStatus("adminStatus", "백업 JSON을 아래 입력창에서 복사해주세요.", "ok");
+      }
+    });
+
+    $("importBtn").addEventListener("click", async () => {
+      const raw = $("backupBox").value.trim();
+      if (!raw) {
+        setStatus("adminStatus", "복원할 JSON을 입력해주세요.", "error");
+        return;
+      }
+      if (!confirm("현재 서버 데이터를 입력한 JSON으로 복원할까요?")) return;
+      try {
+        const data = await apiPost({ action: "importData", adminPassword, data: JSON.parse(raw) });
+        state = data;
+        slots = buildSlots(state.settings);
+        adminMembersDraft = JSON.parse(JSON.stringify(state.members));
+        renderAll();
+        setStatus("adminStatus", "JSON 복원이 완료되었습니다.", "ok");
+      } catch (err) {
+        setStatus("adminStatus", err.message || "JSON 형식이 올바르지 않습니다.", "error");
+      }
+    });
+
+    $("refreshBtn").addEventListener("click", () => loadData());
+
+    loadData();
+    pollingTimer = setInterval(() => loadData({ silent: true }), 4000);
+  </script>
+</body>
+</html>
