@@ -1062,20 +1062,26 @@
       alert("휴가 체크 마감일이 지나 수정이나 체크가 불가합니다.\n수정이나 추가가 필요한 경우 관리자에게 문의하세요.");
     }
 
-    function showSlotTakenPopup(conflictName) {
-      alert(`이미 ${conflictName}님이 선택한 주차입니다.\n같은 주에는 2명 이상 신청할 수 없습니다.\n다른 주차를 선택해주세요.`);
+    function showSlotFullPopup(conflictNames) {
+      const names = Array.isArray(conflictNames) ? conflictNames.join(", ") : String(conflictNames || "다른 팀원");
+      alert(`이미 ${names}님이 선택한 주차입니다.
+같은 주에는 최대 2명까지 신청할 수 있습니다.
+다른 주차를 선택해주세요.`);
     }
 
     function showVacationSuccessPopup() {
       alert("휴가 선택이 완료되었습니다.\n즐거운 휴가 되세요 😎🌴");
     }
 
-    function getSlotConflictMember(slotId, memberName) {
-      if (!slotId || !state?.choices) return null;
-      const entry = Object.entries(state.choices).find(([name, selectedSlotId]) => {
-        return name !== memberName && selectedSlotId === slotId;
-      });
-      return entry ? entry[0] : null;
+    function getSlotSelectedMembers(slotId, excludeMemberName = "") {
+      if (!slotId || !state?.choices) return [];
+      return Object.entries(state.choices)
+        .filter(([name, selectedSlotId]) => name !== excludeMemberName && selectedSlotId === slotId)
+        .map(([name]) => name);
+    }
+
+    function isSlotFullForMember(slotId, memberName) {
+      return getSlotSelectedMembers(slotId, memberName).length >= 2;
     }
 
     function getActiveChoiceMembers() {
@@ -1182,6 +1188,7 @@
           selectedMemberName = btn.dataset.member;
           closeDropdown();
           renderMemberSelectionText();
+          renderSlotSelect();
           renderChoicePreview();
         });
       });
@@ -1200,9 +1207,15 @@
 
     function renderSlotSelect() {
       const select = $("slotSelect");
-      select.innerHTML = `<option value="">주차를 선택하세요</option>` + slots.map(slot => `
-        <option value="${slot.id}" ${selectedSlotId === slot.id ? "selected" : ""}>${slot.label} (${formatMD(slot.start)}~${formatMD(slot.end)})</option>
-      `).join("");
+      select.innerHTML = `<option value="">주차를 선택하세요</option>` + slots.map(slot => {
+        const selectedNames = getSlotSelectedMembers(slot.id, selectedMemberName);
+        const isFull = selectedNames.length >= 2;
+        const selected = selectedSlotId === slot.id ? "selected" : "";
+        const disabled = isFull ? "disabled" : "";
+        const countLabel = ` · 현재 ${selectedNames.length}/2명`;
+        const fullLabel = isFull ? " · 마감" : "";
+        return `<option value="${slot.id}" ${selected} ${disabled}>${slot.label} (${formatMD(slot.start)}~${formatMD(slot.end)})${countLabel}${fullLabel}</option>`;
+      }).join("");
     }
 
     function renderChoicePreview() {
@@ -1460,10 +1473,10 @@
         return;
       }
 
-      const conflictName = getSlotConflictMember(slot.id, member.name);
-      if (conflictName) {
-        showSlotTakenPopup(conflictName);
-        setStatus("choiceStatus", "이미 선택된 주차입니다. 다른 주차를 선택해주세요.", "error");
+      const selectedNames = getSlotSelectedMembers(slot.id, member.name);
+      if (selectedNames.length >= 2) {
+        showSlotFullPopup(selectedNames);
+        setStatus("choiceStatus", "해당 주차는 이미 2명이 선택했습니다. 다른 주차를 선택해주세요.", "error");
         return;
       }
 
@@ -1492,7 +1505,7 @@
         setStatus("choiceStatus", "휴가 일정이 확정되어 달력에 표시되었습니다.", "ok");
         showVacationSuccessPopup();
       } catch (err) {
-        if (String(err.message || "").includes("같은 주에는 2명 이상") || String(err.message || "").includes("선택한 주차")) {
+        if (String(err.message || "").includes("같은 주에는 최대 2명") || String(err.message || "").includes("선택한 주차")) {
           alert(err.message);
         }
         setStatus("choiceStatus", err.message, "error");
