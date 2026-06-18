@@ -554,6 +554,7 @@
 
     .day.holiday-day {
       background: linear-gradient(135deg, #fff1f2 0%, #fff 58%);
+      box-shadow: inset 0 0 0 2px rgba(220, 38, 38, 0.08);
     }
 
     .day.holiday-day .date-num span:first-child {
@@ -564,14 +565,17 @@
       position: relative;
       z-index: 5;
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       justify-content: space-between;
+      gap: 6px;
       font-weight: 1000;
       font-size: 14px;
     }
 
     .day-labels {
       display: flex;
+      flex: 1;
+      min-width: 0;
       gap: 4px;
       flex-wrap: wrap;
       justify-content: flex-end;
@@ -580,21 +584,27 @@
     .deadline-label, .holiday-label {
       display: inline-flex;
       align-items: center;
+      justify-content: center;
       gap: 3px;
-      padding: 3px 6px;
+      padding: 4px 8px;
       border-radius: 999px;
       color: #fff;
-      font-size: 10px;
+      font-size: 11px;
+      line-height: 1.05;
+      letter-spacing: -0.06em;
       font-weight: 1000;
       white-space: nowrap;
+      box-shadow: 0 3px 9px rgba(15, 23, 42, 0.16);
     }
 
     .deadline-label { background: #f59e0b; }
     .holiday-label {
-      max-width: 92px;
+      max-width: 118px;
       overflow: hidden;
       text-overflow: ellipsis;
       background: #dc2626;
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      box-shadow: 0 3px 10px rgba(220, 38, 38, 0.28);
     }
 
     .track {
@@ -815,6 +825,15 @@
       .arrow-right { border-top-width: 6px; border-bottom-width: 6px; border-left-width: 10px; }
       .date-num { font-size: 12px; }
     }
+
+    @media (max-width: 560px) {
+      .holiday-label {
+        max-width: 82px;
+        padding: 3px 6px;
+        font-size: 10px;
+      }
+    }
+
   </style>
 </head>
 <body>
@@ -1202,7 +1221,7 @@
     }
 
     function getHolidayByDate(ymd) {
-      return (state?.holidays || []).find(item => item.date === ymd) || null;
+      return normalizeHolidayList(state?.holidays || []).find(item => item.date === ymd) || null;
     }
 
     function getHolidaysInRange(startYmd, endYmd) {
