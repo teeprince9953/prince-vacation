@@ -19,6 +19,7 @@
       --shadow: 0 14px 40px rgba(15, 23, 42, 0.09);
       --radius: 20px;
       --member-count: 5;
+      --track-row-count: 1;
     }
 
     * { box-sizing: border-box; }
@@ -515,8 +516,8 @@
 
     .day {
       position: relative;
-      min-height: max(128px, calc(80px + var(--member-count) * 24px));
-      padding: 7px;
+      min-height: max(82px, calc(48px + var(--track-row-count) * 20px));
+      padding: 6px;
       border-right: 1px solid var(--line);
       border-bottom: 1px solid var(--line);
       background: #fff;
@@ -572,8 +573,9 @@
       z-index: 4;
       left: 0;
       right: 0;
-      height: 24px;
+      height: 18px;
       pointer-events: none;
+      color: var(--track-color);
     }
 
     .track-line {
@@ -581,11 +583,11 @@
       left: -1px;
       right: -1px;
       top: 50%;
-      height: 6px;
+      height: 5px;
       transform: translateY(-50%);
-      background: currentColor;
-      opacity: 0.84;
-      box-shadow: 0 4px 10px rgba(15, 23, 42, 0.14);
+      background: var(--track-color);
+      opacity: 0.88;
+      box-shadow: 0 3px 8px rgba(15, 23, 42, 0.12);
     }
 
     .track.start .track-line { left: 14px; border-radius: 999px 0 0 999px; }
@@ -603,16 +605,16 @@
 
     .arrow-left {
       left: 2px;
-      border-top: 8px solid transparent;
-      border-bottom: 8px solid transparent;
-      border-right: 14px solid currentColor;
+      border-top: 7px solid transparent;
+      border-bottom: 7px solid transparent;
+      border-right: 12px solid var(--track-color);
     }
 
     .arrow-right {
       right: 2px;
-      border-top: 8px solid transparent;
-      border-bottom: 8px solid transparent;
-      border-left: 14px solid currentColor;
+      border-top: 7px solid transparent;
+      border-bottom: 7px solid transparent;
+      border-left: 12px solid var(--track-color);
     }
 
     .track-name {
@@ -621,17 +623,32 @@
       left: 50%;
       transform: translate(-50%, -50%);
       max-width: 96%;
-      padding: 3px 9px 4px;
+      padding: 4px 11px 5px;
       border-radius: 999px;
       color: #fff;
-      background: currentColor;
-      box-shadow: 0 5px 12px rgba(15,23,42,0.18);
-      font-size: 15px;
+      background: #111827;
+      border: 3px solid var(--track-color);
+      box-shadow: 0 6px 16px rgba(15,23,42,0.26);
+      font-size: 16px;
       font-weight: 1000;
       letter-spacing: -0.04em;
       white-space: nowrap;
-      text-shadow: 0 1px 2px rgba(0,0,0,0.18);
+      text-shadow: 0 1px 2px rgba(0,0,0,0.22);
     }
+
+    .locked-help {
+      margin-top: 10px;
+      padding: 10px 11px;
+      border-radius: 14px;
+      background: #fff1f2;
+      border: 1px solid #fecdd3;
+      color: #be123c;
+      font-size: 13px;
+      font-weight: 900;
+      display: none;
+    }
+
+    .locked-help.show { display: block; }
 
     .loading-cover {
       position: fixed;
@@ -728,14 +745,14 @@
       .field-grid { grid-template-columns: 1fr; }
       .months { padding: 10px; gap: 12px; }
       .day {
-        min-height: max(95px, calc(58px + var(--member-count) * 21px));
+        min-height: max(70px, calc(42px + var(--track-row-count) * 18px));
         padding: 5px;
       }
-      .track { height: 20px; }
-      .track-line { height: 5px; }
-      .track-name { font-size: 12px; padding: 2px 6px; }
-      .arrow-left { border-top-width: 7px; border-bottom-width: 7px; border-right-width: 11px; }
-      .arrow-right { border-top-width: 7px; border-bottom-width: 7px; border-left-width: 11px; }
+      .track { height: 17px; }
+      .track-line { height: 4px; }
+      .track-name { font-size: 12px; padding: 2px 7px; border-width: 2px; }
+      .arrow-left { border-top-width: 6px; border-bottom-width: 6px; border-right-width: 10px; }
+      .arrow-right { border-top-width: 6px; border-bottom-width: 6px; border-left-width: 10px; }
       .date-num { font-size: 12px; }
     }
   </style>
@@ -791,6 +808,7 @@
               <button class="light" id="clearMemberChoiceBtn">선택 취소</button>
             </div>
             <div class="status" id="choiceStatus"></div>
+            <div class="locked-help" id="lockedHelp">휴가 체크 마감일이 지나 수정이나 체크가 불가합니다. 수정이나 추가가 필요한 경우 관리자에게 문의하세요.</div>
           </div>
         </section>
 
@@ -1030,6 +1048,24 @@
       return state.members.find(member => member.name === name);
     }
 
+    function todayYMD() {
+      return toYMD(new Date());
+    }
+
+    function isDeadlinePassed(settings = state?.settings) {
+      if (!settings?.checkDeadline) return false;
+      return todayYMD() > settings.checkDeadline;
+    }
+
+    function showLockedPopup() {
+      alert("휴가 체크 마감일이 지나 수정이나 체크가 불가합니다.\n수정이나 추가가 필요한 경우 관리자에게 문의하세요.");
+    }
+
+    function getActiveChoiceMembers() {
+      if (!state) return [];
+      return state.members.filter(member => state.choices[member.name]);
+    }
+
     function setStatus(id, text, type = "") {
       const el = $(id);
       el.textContent = text || "";
@@ -1068,6 +1104,7 @@
         state = json.data;
         slots = buildSlots(state.settings);
         document.documentElement.style.setProperty("--member-count", String(Math.max(1, state.members.length)));
+        document.documentElement.style.setProperty("--track-row-count", String(Math.max(1, getActiveChoiceMembers().length)));
         renderAll();
         $("loadingCover").style.display = "none";
         $("syncStatus").textContent = `공용 저장 연결됨 · ${new Date().toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" })}`;
@@ -1079,12 +1116,14 @@
     }
 
     function renderAll() {
+      document.documentElement.style.setProperty("--track-row-count", String(Math.max(1, getActiveChoiceMembers().length)));
       renderTitles();
       renderDeadline();
       renderMemberDropdown();
       renderSlotSelect();
       renderChoicePreview();
       renderChoiceList();
+      renderLockState();
       renderAdminDraft();
       renderCalendarBadges();
       renderCalendar();
@@ -1099,8 +1138,11 @@
     }
 
     function renderDeadline() {
-      $("deadlineTitle").textContent = `휴가 체크 마감일: ${formatFull(state.settings.checkDeadline)}`;
-      $("deadlineSub").textContent = `${state.settings.memo || "팀원별 주단위 1회 선택"} · 마감일은 달력에도 노란색으로 표시됩니다.`;
+      const locked = isDeadlinePassed();
+      $("deadlineTitle").textContent = `${locked ? "휴가 체크 마감 완료" : "휴가 체크 마감일"}: ${formatFull(state.settings.checkDeadline)}`;
+      $("deadlineSub").textContent = locked
+        ? "마감일 이후라 직원 선택·수정은 불가합니다. 수정이나 추가가 필요한 경우 관리자에게 문의하세요."
+        : `${state.settings.memo || "팀원별 주단위 1회 선택"} · 마감일은 달력에도 노란색으로 표시됩니다.`;
     }
 
     function renderMemberDropdown() {
@@ -1172,6 +1214,15 @@
       list.innerHTML = rows || "<div class='selected-preview'>등록된 팀원이 없습니다.</div>";
     }
 
+    function renderLockState() {
+      const locked = isDeadlinePassed();
+      const help = $("lockedHelp");
+      help.classList.toggle("show", locked);
+      if (locked) {
+        setStatus("choiceStatus", "마감일 이후라 직원 선택·수정은 잠겨 있습니다.", "error");
+      }
+    }
+
     function renderAdminDraft() {
       if (!adminMembersDraft.length && state) adminMembersDraft = JSON.parse(JSON.stringify(state.members));
 
@@ -1216,11 +1267,12 @@
       const memberBadges = state.members.map(member => `
         <span class="calendar-badge"><span class="dot" style="background:${member.color}"></span>${escapeHtml(member.name)}</span>
       `).join("");
-      badges.innerHTML = `<span class="calendar-badge deadline">마감일 ${formatMD(state.settings.checkDeadline)}</span>${memberBadges}`;
+      badges.innerHTML = `<span class="calendar-badge deadline">${isDeadlinePassed() ? "마감 완료" : "마감일"} ${formatMD(state.settings.checkDeadline)}</span>${memberBadges}`;
     }
 
     function getChoiceInfoForDate(ymd) {
-      return state.members.map((member, memberIndex) => {
+      const activeMembers = getActiveChoiceMembers();
+      return activeMembers.map((member, rowIndex) => {
         const slotId = state.choices[member.name];
         const slot = getSlot(slotId);
         if (!slot || ymd < slot.start || ymd > slot.end) return null;
@@ -1230,7 +1282,7 @@
         const center = addDays(start, Math.floor((end - start) / (2 * 24 * 60 * 60 * 1000)));
         return {
           member,
-          memberIndex,
+          rowIndex,
           slot,
           isStart: ymd === slot.start,
           isEnd: ymd === slot.end,
@@ -1289,9 +1341,9 @@
           if (ymd === deadline) dayEl.classList.add("deadline-day");
 
           const tracks = getChoiceInfoForDate(ymd).map(info => {
-            const top = 34 + info.memberIndex * 26;
+            const top = 28 + info.rowIndex * 20;
             return `
-              <div class="track ${info.isStart ? "start" : ""} ${info.isEnd ? "end" : ""}" style="top:${top}px;color:${info.member.color}">
+              <div class="track ${info.isStart ? "start" : ""} ${info.isEnd ? "end" : ""}" style="top:${top}px;--track-color:${info.member.color}">
                 <span class="track-line"></span>
                 ${info.isStart ? `<span class="arrow arrow-left"></span>` : ""}
                 ${info.isEnd ? `<span class="arrow arrow-right"></span>` : ""}
@@ -1369,6 +1421,10 @@
     });
 
     $("choiceCompleteBtn").addEventListener("click", () => {
+      if (isDeadlinePassed()) {
+        showLockedPopup();
+        return;
+      }
       const member = getMember(selectedMemberName);
       const slot = getSlot(selectedSlotId);
 
@@ -1412,6 +1468,10 @@
     });
 
     $("clearMemberChoiceBtn").addEventListener("click", async () => {
+      if (isDeadlinePassed()) {
+        showLockedPopup();
+        return;
+      }
       const member = getMember(selectedMemberName);
       if (!member) {
         setStatus("choiceStatus", "선택 취소할 팀원명을 먼저 선택해주세요.", "error");
@@ -1429,7 +1489,7 @@
     });
 
     $("adminOpenBtn").addEventListener("click", () => {
-      if (adminPassword) {
+      if (adminPassword === "admin1234") {
         openAdminArea();
         return;
       }
@@ -1441,25 +1501,16 @@
 
     $("passwordCancelBtn").addEventListener("click", () => closeModal("passwordModal"));
 
-    $("passwordConfirmBtn").addEventListener("click", async () => {
+    $("passwordConfirmBtn").addEventListener("click", () => {
       const value = $("adminPasswordInput").value;
-      if (!value) {
-        setStatus("passwordStatus", "비밀번호를 입력해주세요.", "error");
+      if (value !== "admin1234") {
+        setStatus("passwordStatus", "비밀번호가 맞지 않습니다.", "error");
         return;
       }
-
-      try {
-        $("passwordConfirmBtn").disabled = true;
-        await apiPost({ action: "verifyAdmin", adminPassword: value });
-        adminPassword = value;
-        sessionStorage.setItem(LOCAL_ADMIN_KEY, value);
-        closeModal("passwordModal");
-        openAdminArea();
-      } catch (err) {
-        setStatus("passwordStatus", err.message, "error");
-      } finally {
-        $("passwordConfirmBtn").disabled = false;
-      }
+      adminPassword = value;
+      sessionStorage.setItem(LOCAL_ADMIN_KEY, value);
+      closeModal("passwordModal");
+      openAdminArea();
     });
 
     $("adminPasswordInput").addEventListener("keydown", (e) => {

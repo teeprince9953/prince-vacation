@@ -204,6 +204,26 @@ function requireAdmin(password) {
   return String(password || "") === ADMIN_PASSWORD;
 }
 
+function koreaTodayYMD() {
+  const parts = new Intl.DateTimeFormat("en", {
+    timeZone: "Asia/Seoul",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit"
+  }).formatToParts(new Date());
+
+  const map = Object.fromEntries(parts.map(part => [part.type, part.value]));
+  return `${map.year}-${map.month}-${map.day}`;
+}
+
+function isDeadlinePassed(settings) {
+  return koreaTodayYMD() > String(settings?.checkDeadline || "9999-12-31");
+}
+
+function deadlineMessage() {
+  return "휴가 체크 마감일이 지나 수정이나 체크가 불가합니다. 수정이나 추가가 필요한 경우 관리자에게 문의하세요.";
+}
+
 async function getBody(request) {
   try {
     return await request.json();
@@ -234,6 +254,10 @@ export default async (request) => {
   }
 
   if (action === "selectVacation") {
+    if (isDeadlinePassed(data.settings)) {
+      return responseJson({ ok: false, message: deadlineMessage() }, 403);
+    }
+
     const memberName = String(body.memberName || "").trim();
     const slotId = String(body.slotId || "").trim();
     const member = data.members.find(m => m.name === memberName);
@@ -248,6 +272,10 @@ export default async (request) => {
   }
 
   if (action === "clearVacation") {
+    if (isDeadlinePassed(data.settings)) {
+      return responseJson({ ok: false, message: deadlineMessage() }, 403);
+    }
+
     const memberName = String(body.memberName || "").trim();
     const member = data.members.find(m => m.name === memberName);
     if (!member) return responseJson({ ok: false, message: "등록되지 않은 팀원입니다." }, 400);

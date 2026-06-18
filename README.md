@@ -1,5 +1,48 @@
 # 프린스 하계휴가 일정표 Netlify 배포 가이드
 
+## 0. 404 Page not found가 뜰 때 먼저 확인할 것
+
+Netlify에서 `Page not found`가 뜨는 가장 흔한 원인은 배포 폴더 안에 `index.html`이 없거나, Publish directory가 잘못 잡힌 경우입니다.
+
+정상 구조는 GitHub 저장소 첫 화면에 아래 파일들이 바로 보여야 합니다.
+
+```txt
+index.html
+package.json
+netlify.toml
+_redirects
+netlify/functions/vacation-data.mjs
+README.md
+```
+
+아래처럼 한 단계 폴더 안에 들어가 있으면 404가 날 수 있습니다.
+
+```txt
+prince-vacation-netlify/index.html
+prince-vacation-netlify/package.json
+prince-vacation-netlify/netlify.toml
+```
+
+이 경우 해결 방법은 둘 중 하나입니다.
+
+### 해결 방법 A: 파일을 저장소 루트로 옮기기
+
+GitHub 저장소 첫 화면에서 `index.html`이 바로 보이도록 파일을 옮깁니다. 초보자에게는 이 방법이 가장 쉽습니다.
+
+### 해결 방법 B: Netlify 설정에서 Base directory 지정
+
+이미 폴더째 업로드했다면 Netlify에서 아래처럼 설정합니다.
+
+```txt
+Base directory: prince-vacation-netlify
+Build command: 비워둠
+Publish directory: .
+Functions directory: netlify/functions
+```
+
+변경 후 `Clear cache and deploy site`로 다시 배포하세요.
+
+
 ## 1. 프로젝트 구성
 
 이 ZIP 파일에는 아래 파일이 들어 있습니다.
@@ -9,6 +52,7 @@ prince-vacation-netlify/
 ├─ index.html
 ├─ package.json
 ├─ netlify.toml
+├─ _redirects
 ├─ .gitignore
 └─ netlify/
    └─ functions/
@@ -21,6 +65,7 @@ prince-vacation-netlify/
 - `netlify/functions/vacation-data.mjs` : 여러 직원이 같은 데이터를 보게 해주는 서버 기능
 - `package.json` : Netlify Blobs 저장 기능 설치 정보
 - `netlify.toml` : Netlify 배포 설정
+- `_redirects` : 잘못된 하위 경로 접속 시 메인 화면으로 연결
 
 ## 2. 관리자 비밀번호
 
@@ -153,3 +198,11 @@ admin1234
 - 이 프로젝트는 Netlify Functions와 Netlify Blobs 저장 기능을 사용합니다.
 - 여러 직원이 동시에 같은 팀원을 수정하면 마지막으로 저장한 내용이 반영됩니다.
 - 관리자 비밀번호 `admin1234`는 내부용 간단 보호입니다. 외부 공개 페이지라면 Netlify Identity, Supabase Auth 같은 로그인 기능을 붙이는 것이 안전합니다.
+
+## 최근 수정 반영
+
+- 선택 완료한 팀원 이름을 검정 배지 + 팀원 색상 테두리로 변경해 달력에서 잘 보이게 조정했습니다.
+- 달력 날짜 칸 높이를 줄였고, 확정된 팀원 수 기준으로만 필요한 높이가 잡히도록 변경했습니다.
+- 휴가 체크 마감일 이후에는 직원 화면에서 선택 완료와 선택 취소가 막힙니다.
+- 마감일 이후 수정이나 추가 시도 시 “관리자에게 문의” 안내 팝업이 뜹니다.
+- 서버 함수에서도 마감일 이후 선택/취소 요청을 차단합니다. 관리자 설정 변경과 초기화는 관리자 비밀번호로 가능합니다.
