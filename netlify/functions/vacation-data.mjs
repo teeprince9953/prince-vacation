@@ -98,17 +98,17 @@ function buildSlots(settings) {
   const end = parseDate(settings.endDate);
   if (!start || !end || start > end) return [];
 
-  const firstMonday = getMondayOnOrAfter(addDays(start, -6));
   const result = [];
   const seen = new Set();
-  let monday = new Date(firstMonday);
+  let monday = getMondayOnOrAfter(start);
 
-  while (monday <= addDays(end, 6)) {
-    const slotStart = addDays(monday, -2);
-    const slotEnd = addDays(monday, 6);
-    const overlaps = slotStart <= end && slotEnd >= start;
+  while (monday <= end) {
+    const rawSlotStart = addDays(monday, -2);
+    const rawSlotEnd = addDays(monday, 6);
+    const slotStart = rawSlotStart < start ? new Date(start) : rawSlotStart;
+    const slotEnd = rawSlotEnd > end ? new Date(end) : rawSlotEnd;
 
-    if (overlaps) {
+    if (slotStart <= slotEnd) {
       const id = toYMD(monday);
       if (!seen.has(id)) {
         result.push({
