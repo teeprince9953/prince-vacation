@@ -854,8 +854,9 @@
           </div>
 
           <div class="btn-row">
-            <button class="light" id="autoPeriodBtn">해당 연도 자동 기간 적용</button>
+            <button class="light" id="autoPeriodBtn">7월말~8월말 자동 기간 적용</button>
           </div>
+          <div class="admin-note" style="margin-top:10px;">휴가 종료일은 9월 이후 날짜도 자유롭게 저장됩니다. 단, 위 자동 기간 버튼을 누르면 해당 연도 기준 7월 마지막주~8월 마지막주로 다시 계산됩니다.</div>
 
           <hr style="border:0;border-top:1px solid var(--line);margin:16px 0;" />
 
@@ -1100,6 +1101,10 @@
       $(id).classList.remove("open");
     }
 
+    function isAdminAreaOpen() {
+      return $("adminArea").classList.contains("open");
+    }
+
     async function apiPost(payload) {
       const res = await fetch(API_URL, {
         method: "POST",
@@ -1140,7 +1145,9 @@
       renderChoicePreview();
       renderChoiceList();
       renderLockState();
-      renderAdminDraft();
+      if (!isAdminAreaOpen()) {
+        renderAdminDraft();
+      }
       renderCalendarBadges();
       renderCalendar();
     }
@@ -1564,7 +1571,7 @@
       $("adminEnd").value = period.endDate;
       $("adminDeadline").value = period.checkDeadline;
       $("adminMemo").value = "7월 마지막주부터 8월 마지막주까지";
-      setStatus("adminStatus", `${year}년 기준 자동 기간을 적용했습니다.`, "ok");
+      setStatus("adminStatus", `${year}년 기준 7월말~8월말 자동 기간을 적용했습니다. 9월 이후까지 사용하려면 종료일을 직접 수정한 뒤 저장하세요.`, "ok");
     });
 
     $("addMemberBtn").addEventListener("click", () => {
@@ -1618,6 +1625,7 @@
         slots = buildSlots(state.settings);
         adminMembersDraft = JSON.parse(JSON.stringify(state.members));
         renderAll();
+        renderAdminDraft();
         setStatus("adminStatus", "관리자 설정이 저장되었습니다.", "ok");
       } catch (err) {
         setStatus("adminStatus", err.message, "error");
